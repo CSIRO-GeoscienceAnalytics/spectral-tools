@@ -1,7 +1,6 @@
 """
-The class SpectralExtraction is used for finding spectral features in a spectral dataset. Additionally, the user can also
-perform a search of the returned features via the feature_search convenience functions. The user can however just search
-the returned features themselves if they wish.
+A module for extracting spectral feature information from a supplied spectral dataset and its ordinates.
+from spectraltools.extraction import extract_spectral_features
 """
 
 import multiprocessing as mp
@@ -19,7 +18,21 @@ warnings.simplefilter('ignore', np.RankWarning)  # stop polyfit rankwarnings
 
 @dataclass
 class Features:
-    pass
+    extracted_features: NDArray
+    max_features: int
+    do_hull: bool
+    hull_type: int
+    invert: bool
+    fit_type: str
+    resolution: float
+    ordinates_inspection_range:  list[float, float]
+    prominence: float
+    height: float
+    threshold: float
+    distance: int
+    width: float
+    wlen: float
+
 
 def _mp_leadin(spectral_array: NDArray, ordinates: NDArray, distance: int, max_features: int, prominence: float, height: float, threshold: float, width: int, wlen: float, fit_type: str, resolution: float) -> list:
 
@@ -72,12 +85,9 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
                         distance: int = None, prominence: float = None, width: float = None, wlen: float = None,
                         fit_type: str = 'cheb', resolution: float = None):
     """
-    Get the peaks for a single spectrum
+    Return the peaks for a given spectrum
 
     Args:
-        old_school (bool): if True use the location of the minimum and 1 channel to the left and right to use
-            a 2nd order polynomial to solve for the wavelength location. if False use a 6 order polynomial.
-
         signal (ndarray): the signal to be processed (usually a numpy array)
 
         ordinates (ndarray): the ordinates corresponding to the signal (usually a numpy array)
@@ -119,18 +129,6 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
         7: Wavelength location of the left hand side of the FWHM
 
         8: Wavelength location of the right hand side of the FWHM
-        :param height:
-        :type height:
-        :param wlen:
-        :type wlen:
-        :param width:
-        :type width:
-        :param threshold:
-        :type threshold:
-        :param height:
-        :type height:
-
-
     """
     def _remove_excess_features(max_features, peaks, peaks_properties, indices, ordinates):
         if len(indices) >= max_features:
@@ -373,9 +371,10 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
             feature_info = np.reshape(np.asarray(feature_info),
                                     (spectral_array.shape[0], spectral_array.shape[1], 9, max_features))
 
-    package = Features()
+    package = Features(feature_info, max_features, do_hull, hull_type, invert,
+    fit_type, resolution, ordinates_inspection_range, prominence, height, threshold, distance, width, wlen)
 
-    return feature_info
+    return package
 
 
 @dataclass
