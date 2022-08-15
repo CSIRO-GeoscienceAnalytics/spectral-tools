@@ -47,7 +47,7 @@ HAVE_CYTHON = False
 extensions = {}
 ext = '.pyx' if HAVE_CYTHON else '.c'
 
-extensions = [Extension("spex.ext.chulls", ["spex/ext/chulls"+ext])]
+extensions = [Extension("spectraltools.ext.chulls", ["spectraltools/ext/chulls"+ext])]
 
 if HAVE_CYTHON:
     #extensions = [Extension("spex.ext.chulls", ["spex/ext/chulls.pyx"])]
@@ -55,19 +55,18 @@ if HAVE_CYTHON:
     extensions = cythonize(extensions, compiler_directives=compiler_directives)
 
 setup(
-    name='spex',
+    name='spectraltools',
     version='0.1.67',
     packages=find_packages(),
-    package_data={'spex': ['ext/*.pyd', 'ext/*.so', 'speclib/spectral_libraries/*.csv']},
+    package_data={'spectraltools': ['ext/*.pyd', 'ext/*.so']},
     include_package_data=True,
     url='',
     author='Andrew Rodger',
-    #author_email='andrew.rodger@csiro.au',
-    license='',
+    license='MIT',
     description='A collection of tools that I have used for working with hyperspectral data',
-    install_requires=['numpy', 'cython', 'spectral', 'pandas', 'scipy', 'scikit-learn'],
-    python_requires='>=3.7',
-    setup_requires=['cython', 'numpy', 'wheel'],
+    install_requires=['numpy', 'spectral', 'pandas', 'scipy', 'scikit-learn'],
+    python_requires='>=3.10',
+    setup_requires=['numpy', 'wheel'],
     zip_safe=False,
     # Cython extensions & other stuff
     cmdclass={'build_py': build_py, 'build_ext': build_ext},
