@@ -3,6 +3,7 @@ A module for extracting spectral feature information from a supplied spectral da
 from spectraltools.extraction import extract_spectral_features
 """
 
+import imp
 import multiprocessing as mp
 import warnings
 from dataclasses import dataclass
@@ -11,6 +12,7 @@ from typing import Optional
 import numpy as np
 from numpy.polynomial.chebyshev import Chebyshev as cheb
 from numpy.typing import NDArray
+from scipy.interpolate import interp1d
 from scipy.signal import find_peaks
 from spectraltools.ext import chulls
 
@@ -182,7 +184,9 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
 
         # fit and interpolate
         chubby = cheb.fit(ordinates, signal, cheb_deg)
-        o, s = chubby.linspace(resolution_multiplier)
+        interp_function = interp1d(ordinates, chubby(ordinates))
+        o = np.linspace(ordinates[0], ordinates[-1], resolution_multiplier)
+        s = interp_function(o)
         end_buffer = distance
 
         # create an end-buffer where the fit is regarded as untrustworthy
