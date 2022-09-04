@@ -2,11 +2,7 @@ Metadata-Version: 2.1
 Name: spectraltools
 Version: 0.1.67
 Summary: A collection of tools that I have used for working with hyperspectral data
-Home-page: UNKNOWN
+Home-page: 
 Author: Andrew Rodger
 License: MIT
-Platform: UNKNOWN
 Requires-Python: >=3.10
-
-UNKNOWN
-
