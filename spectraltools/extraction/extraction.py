@@ -63,23 +63,19 @@ def _mp_process_data(spectral_array, ordinates, distance, max_features, prominen
     Returns: the calculated feature information
 
     """
-    feature_info = []
+    #feature_info = []
     if spectral_array.ndim == 2:
-        for spectrum in spectral_array:
-            # return the peaks_ordinates, prominences and widths
-            feature_info.append(_process_signal(spectrum, ordinates, distance=distance,
+        feature_info = [_process_signal(spectrum, ordinates, distance=distance,
                                                     max_features=max_features, prominence=prominence,
                                                     height=height, threshold=threshold,
-                                                    width=width, wlen=wlen, fit_type=fit_type, resolution=resolution))
+                                                    width=width, wlen=wlen, fit_type=fit_type, resolution=resolution) 
+                                                    for spectrum in spectral_array]
     if spectral_array.ndim == 3:
-        for row in spectral_array:
-            for spectrum in row:
-                # return the peaks_ordinates, prominences and widths
-                feature_info.append(
-                    _process_signal(spectrum, ordinates, distance=distance, max_features=max_features,
+        feature_info = [_process_signal(spectrum, ordinates, distance=distance, max_features=max_features,
                                         prominence=prominence,
                                         height=height, threshold=threshold,
-                                        width=width, wlen=wlen, fit_type=fit_type, resolution=resolution))
+                                        width=width, wlen=wlen, fit_type=fit_type, resolution=resolution) 
+                                        for row in spectral_array for spectrum in row]
     return feature_info
 
 
@@ -156,18 +152,20 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
 
 
     def _create_final_return_values(ordinates, peaks_properties, peak_ordinates):
-        left_ips = np.interp(peaks_properties['left_ips'], np.arange(ordinates.shape[0]), ordinates)
-        right_ips = np.interp(peaks_properties['right_ips'], np.arange(ordinates.shape[0]), ordinates)
-        widths = right_ips - left_ips
-        left_bases = np.interp(peaks_properties['left_bases'], np.arange(ordinates.shape[0]), ordinates)
-        right_bases = np.interp(peaks_properties['right_bases'], np.arange(ordinates.shape[0]), ordinates)
-        asymmetry = np.zeros(left_ips.shape)
-        indx = (right_ips - left_ips) > 0
+        
+        xp = np.arange(ordinates.shape[0])
+        values_in = [peaks_properties['left_ips'], peaks_properties['right_ips'], peaks_properties['left_bases'], peaks_properties['right_bases']]
+        
+        values_out = np.interp(values_in, xp, ordinates)
+        widths = values_out[1] - values_out[0]
+        
+        indx = widths > 0
+        asymmetry = np.zeros(values_out[0].shape)
         asymmetry[indx] = 2 * (
-                (right_ips[indx] - np.array(peak_ordinates)[indx]) / (right_ips[indx] - left_ips[indx]) - 0.5)
-
+                (values_out[1][indx] - np.array(peak_ordinates)[indx]) / (values_out[1][indx] - values_out[0][indx]) - 0.5)
+        
         return np.asarray(peak_ordinates), peaks_properties['prominences'], widths, asymmetry, \
-                        peaks_properties['peak_heights'], left_bases, right_bases, left_ips, right_ips
+                        peaks_properties['peak_heights'], values_out[2], values_out[3], values_out[0], values_out[1]
 
 
     def _chebyshev_fit(signal, ordinates, max_features, height, threshold, distance, prominence, width, wlen, resolution):
