@@ -3,7 +3,7 @@ A module for extracting spectral feature information from a supplied spectral da
 from spectraltools.extraction import extract_spectral_features
 """
 
-import imp
+#import imp
 import multiprocessing as mp
 import warnings
 from dataclasses import dataclass
@@ -15,6 +15,7 @@ from numpy.typing import NDArray
 from scipy.interpolate import interp1d
 from scipy.signal import find_peaks
 from spectraltools.ext import chulls
+from spectraltools.ext.convexhulls import uc_hulls
 
 warnings.simplefilter('ignore', np.RankWarning)  # stop polyfit rankwarnings
 
@@ -273,10 +274,10 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
     def _hulls_if_required(ordinates_in: NDArray, spectral_array: NDArray, do_hull: bool = False, hull_type: int = 0) -> NDArray:
         # run a hull process if required
         if do_hull:
-            spectral_array = chulls.get_absorption(ordinates_in, spectral_array, hull_type=hull_type)
+            spectral_array = uc_hulls(ordinates_in, spectral_array, hull_type=hull_type)
         if hull_type == 3:
             # do a baseline correction. Should really only do this for spectral data
-            spectral_array = chulls.get_absorption(ordinates_in, 1.0 - spectral_array, hull_type=1)
+            spectral_array = uc_hulls(ordinates_in, 1.0 - spectral_array, hull_type=1)
         return spectral_array
 
 
