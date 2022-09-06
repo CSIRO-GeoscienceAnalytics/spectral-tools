@@ -336,7 +336,7 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
     spectral_array = _hulls_if_required(ordinates_in, spectral_array, do_hull=do_hull, hull_type=hull_type)
 
     if spectral_array.ndim == 1:
-        # TODO This could be run in multiprocessing
+        # TODO This could be run in multiprocessing. I(N FACT THIS IS PROBS WRONG IF ITS A SINGLE SPECTRUM!!)
         for signal in _generator(spectral_array):
             # return the peaks_ordinates, prominences and widths
             feature_info.append(
@@ -349,21 +349,16 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
                                         height, threshold, width, wlen, fit_type, resolution)
         else:
             if spectral_array.ndim == 3:
-                for row in spectral_array:
-                    for signal in _generator(row):
-                        # return the peaks_ordinates, prominences and widths
-                        feature_info.append(
-                            _process_signal(signal, ordinates_in, distance=distance,
+                feature_info = [_process_signal(signal, ordinates_in, distance=distance,
                                                     max_features=max_features, prominence=prominence,
                                                     height=height, threshold=threshold,
-                                                    width=width, wlen=wlen, resolution=resolution))
+                                                    width=width, wlen=wlen, resolution=resolution) for row in spectral_array for signal in row]
+
             if spectral_array.ndim == 2:
-                for signal in spectral_array:
-                    feature_info.append(
-                        _process_signal(signal, ordinates_in, distance=distance,
+                feature_info = [_process_signal(signal, ordinates_in, distance=distance,
                                                 max_features=max_features, prominence=prominence,
                                                 height=height, threshold=threshold,
-                                                width=width, wlen=wlen, resolution=resolution))
+                                                width=width, wlen=wlen, resolution=resolution) for signal in spectral_array]
 
     match spectral_array.ndim:
         case 1:
