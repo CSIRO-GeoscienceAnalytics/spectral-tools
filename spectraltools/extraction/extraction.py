@@ -1,8 +1,6 @@
+""" 
+A collection of routines for feature extraction
 """
-A module for extracting spectral feature information from a supplied spectral dataset and its ordinates.
-from spectraltools.extraction import extract_spectral_features
-"""
-
 import multiprocessing as mp
 import warnings
 from dataclasses import dataclass
@@ -81,53 +79,34 @@ def _mp_process_data(spectral_array, ordinates, distance, max_features, prominen
 def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, height: float = None, threshold: float = None,
                         distance: int = None, prominence: float = None, width: float = None, wlen: float = None,
                         fit_type: str = 'cheb', resolution: float = None):
-    """
-    Return the peaks for a given spectrum
+    """_process_signal _summary_
 
     Args:
-        signal (ndarray): the signal to be processed (usually a numpy array)
-
-        ordinates (ndarray): the ordinates corresponding to the signal (usually a numpy array)
-
-        distance (int, optional): Required minimal horizontal distance (>= 1) in samples between neighbouring peaks.
-            Smaller peaks are removed first until the condition is fulfilled for all remaining peaks.
-
-        prominence (number or ndarray or sequence, optional): Required prominence of peaks. Either a number, ``None``,
-            an array matching `x` or a 2-element sequence of the former. The first element is always interpreted as the
-            minimal and the second, if supplied, as the maximal required prominence.
-
-        max_features (int): maximum number of features to report back
-
-    Returns:
-        ndarray: A numpy array of size (9 x number of requested features) values representing the feature parameters for each of
-            the found features
-
-    Comments:
-        The 9 parameters associated with a single feature are as follows,
-
-        0: feature wavelength
-
-        1: feature depth (given as prominence in the find_peaks routine). These can be considered as relative depths.
-        See the explanation of prominence in
-        https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks.html
-
-        2: feature width (FWHM)
-
-        3: feature asymmetry. A number between -1 and 1. -1 is heavily left symmetrical, 0 is symmetrical and 1 is
-        heavily right symmetrical
-
-        4: feature peak heights. These are different than the feature depths. The feature peak heights are the height
-        from the base line to the top of the peak
-
-        5: Wavelength location of the left shoulder of a feature (from a prominence point of view)
-
-        6: Wavelength location of the right shoulder of a feature (from a prominence point of view)
-
-        7: Wavelength location of the left hand side of the FWHM
-
-        8: Wavelength location of the right hand side of the FWHM
+        signal (NDArray): _description_
+        ordinates (NDArray): _description_
+        max_features (int, optional): _description_. Defaults to 4.
+        height (float, optional): _description_. Defaults to None.
+        threshold (float, optional): _description_. Defaults to None.
+        distance (int, optional): _description_. Defaults to None.
+        prominence (float, optional): _description_. Defaults to None.
+        width (float, optional): _description_. Defaults to None.
+        wlen (float, optional): _description_. Defaults to None.
+        fit_type (str, optional): _description_. Defaults to 'cheb'.
+        resolution (float, optional): _description_. Defaults to None.
     """
     def _remove_excess_features(max_features, peaks, peaks_properties, indices, ordinates):
+        """_remove_excess_features _summary_
+
+        Args:
+            max_features (_type_): _description_
+            peaks (_type_): _description_
+            peaks_properties (_type_): _description_
+            indices (_type_): _description_
+            ordinates (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         if len(indices) >= max_features:
             indices = indices[:max_features]
         peaks = peaks[indices]
@@ -212,15 +191,6 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
         # Interpolate the left and right locations of the FWHM to wavelength space
         return _create_final_return_values(ordinates, peaks_properties, peak_ordinates)
 
-    def _crude_fit(signal_array, ordinates, ordinates_inspection_range):
-
-        indices = np.searchsorted(ordinates, ordinates_inspection_range)
-
-        depths = uc_hulls(ordinates[indices[0]:indices[1]+1], signal_array[...,indices[0]:indices[1]+1], 0).max(axis=(signal_array.ndim-1))
-        waves =  ordinates[indices[0]:indices[1]+1][uc_hulls(ordinates[indices[0]:indices[1]+1], signal_array[...,indices[0]:indices[1]+1], 0).argmax(axis=(signal_array.ndim-1))]
-
-        # Interpolate the left and right locations of the FWHM to wavelength space
-        return depths, waves
 
     # set the width and height if it hasnt been already
     if width is None:
@@ -245,14 +215,31 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
     fit_type: str = 'cheb', resolution: float = 1.0, ordinates_inspection_range:  Optional[list[float, float]] = None,
     prominence: Optional[float] = None, height: Optional[float] = None, threshold: Optional[float] = None,
     distance: Optional[int] = None, width: Optional[float] = None, wlen: Optional[float] = None) -> Features:
-    """
-    This is an internal method so we can work with spectral image data.
+    """extract_spectral_features 
+    This routine will extract spectral features from the input spectral data.
+
+    Args:
+        instrument_data (NDArray): incoming spectral data array 1D, 2D [N, Bands], 3D [Row, Col, Bands]
+        ordinates (NDArray): ordinates corresponding to the spectral array 
+        max_features (int, optional): Maximum number of features to look for. Defaults to 4.
+        do_hull (bool, optional): Apply a hull correction prior to looking for features. Need to do this with refrlectance. Defaults to False.
+        hull_type (int, optional): 0 - hull quotient, 1 - hull removal, 2 - return hull. Defaults to 0.
+        invert (bool, optional): Invert the incoming spectra. Defaults to False.
+        main_guard (bool, optional): If run in a main guard makes use of mutliproccessing. Defaults to False.
+        fit_type (str, optional): 'cheb', 'raw', 'crude'. Defaults to 'cheb'.
+        resolution (float, optional): if fit_type = 'cheb' this defines the desired resolution of the result. Defaults to 1.0.
+        ordinates_inspection_range (Optional[list[float, float]], optional): start and stop wavelengths over which to look. Defaults to None.
+        prominence (Optional[float], optional):minimum prominence value to consider. Defaults to None.
+        height (Optional[float], optional): minimum base to peak height to consider. Defaults to None.
+        threshold (Optional[float], optional): nothing at the moment. Not implemented. Defaults to None.
+        distance (Optional[int], optional): minimum distance in bands that features are allowed to exist together. Defaults to None.
+        width (Optional[float], optional): minimum width to consider. Defaults to None.
+        wlen (Optional[float], optional): minimum distance around a feature to use (setting this can cause issues). Defaults to None.
 
     Returns:
-        feature_info[N, M, 9] where N is the number of rows and M is the number of columns
-
-    Comments:
-        The 9 parameters associated with a single feature are as follows:
+        Features: a class containing various input selections and of course the features found
+        
+        The 9 parameters associated with a single feature are as follows,
 
         0: feature wavelength
 
@@ -262,7 +249,7 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
 
         2: feature width (FWHM)
 
-        3:Feature asymmetry. A number between -1 and 1. -1 is heavily left symmetrical, 0 is symmetrical and 1 is
+        3: feature asymmetry. A number between -1 and 1. -1 is heavily left symmetrical, 0 is symmetrical and 1 is
         heavily right symmetrical
 
         4: feature peak heights. These are different than the feature depths. The feature peak heights are the height
@@ -275,7 +262,6 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
         7: Wavelength location of the left hand side of the FWHM
 
         8: Wavelength location of the right hand side of the FWHM
-
     """
 
 

@@ -1,11 +1,3 @@
-""" _summary_
-
-Returns:
-    _description_
-
-Yields:
-    _description_
-"""
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Union
@@ -17,22 +9,11 @@ from numpy.typing import NDArray
 
 @dataclass
 class Spectra:
-    """ _summary_
-    """
     ordinates: NDArray
     spectra: NDArray
     sample_names: list[str]
 
 def _get_csv_data(csv_file: Union[Path, str], csv_order: int = 1) -> tuple[NDArray, NDArray, list[str]]:
-    """_get_csv_data _summary_
-
-    Args:
-        csv_file: _description_
-        csv_order: _description_. Defaults to 1.
-
-    Returns:
-        _description_
-    """
     names: list[str]
     spectra: NDArray
     ordinates: NDArray
@@ -52,27 +33,17 @@ def _get_csv_data(csv_file: Union[Path, str], csv_order: int = 1) -> tuple[NDArr
 
     return ordinates, spectra, names
 
-    # def datagenerator(self):
-    #     """
-    #     an iterator to return a single spectrum at a time from the dataset
-    #     Yields:
-    #         a single spectrum from the dataset
-
-    #     """
-    #     for spectrum in self.spectra:
-    #         yield spectrum
-
-
 def read_csv(csv_file: Union[Path, str], csv_order: int = 1) -> Spectra:
-    """read_csv _summary_
 
-    Args:
-        csv_file: _description_
-        csv_order: _description_. Defaults to 1.
+    # """read_csv Read spectral data from a CSV file
 
-    Returns:
-        _description_
-    """
+    # Args:
+    #     csv_file (Union[Path, str]): The path to the file
+    #     csv_order (int, optional): CSV order. Defaults to 1.
+
+    # Returns:
+    #     Spectra: The spectra, ordinates and spectral sample names
+    # """
     csv_wavelengths, csv_spectra, sample_names = _get_csv_data(csv_file, csv_order)
     package = Spectra(csv_wavelengths, csv_spectra, sample_names)
     return package

@@ -1,4 +1,3 @@
-# todo look for repeated code that can be busted out as methods
 """
 THIS IS A MESS AT THIS STAGE AND SHOULD BE IGNORED. I NEED TO CLEAN IT UP
 
@@ -11,18 +10,18 @@ I mean its okat to call them how I do when its on my machine but when someone in
 So this I will fix a bit later
 """
 import os
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-from spex.ext.chulls import get_absorption
-from sklearn.preprocessing import normalize
-from sklearn.decomposition import non_negative_factorization
-from spex.utilities.find_indices import find_indices
-from scipy.interpolate import CubicSpline
-import plotly.graph_objects as go
-import seaborn as sb
 from itertools import combinations
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import pkg_resources
+from plotly import graph_objects as go
+from scipy.interpolate import CubicSpline
+from scipy.stats import pearsonr
+from sklearn.decomposition import non_negative_factorization
+from sklearn.preprocessing import normalize
+from spectraltools.ext.convexhulls import uc_hulls
 
 
 class SpectralMix(object):
@@ -85,7 +84,7 @@ class SpectralMix(object):
         self.set_library(library)
         self.convert_library_to_instrument()
         self.make_average_instrument_library()
-        self.range_indices = find_indices(spectral_range, self.instrument_wavelengths)
+        self.range_indices = np.searchsorted(self.instrument_wavelengths, spectral_range) 
 
     def set_external_library(self, wavelengths, spectra, names):
         """
@@ -106,7 +105,7 @@ class SpectralMix(object):
 
         self.convert_library_to_instrument()
         self.make_average_instrument_library()
-        self.range_indices = find_indices(self.spectral_range, self.instrument_wavelengths)
+        self.range_indices = np.searchsorted(self.instrument_wavelengths, self.spectral_range) #find_indices(self.spectral_range, self.instrument_wavelengths)
 
     def set_library(self, library=None):
         """
@@ -263,7 +262,6 @@ class SpectralMix(object):
         synthetics, inst_spec = self._normalise_the_spectra(inst_spec, synth)
 
         # store the result and return them
-        from scipy.stats import pearsonr
         r2 = [pearsonr(val1, val2)[0] for val1, val2 in zip(inst_spec, synthetics)]
 
         return np.asarray(r2)
@@ -391,13 +389,13 @@ class SpectralMix(object):
         Returns:
 
         """
-        inst_hull = get_absorption(wavelengths, inst_spec, 2)
+        inst_hull = uc_hulls(wavelengths, inst_spec, 2)
         if tir:
-            lib_spec = get_absorption(wavelengths, 1.0 - lib_spec, self.hull_type)
-            inst_spec = get_absorption(wavelengths, 1.0 - inst_spec, self.hull_type)
+            lib_spec = uc_hulls(wavelengths, 1.0 - lib_spec, self.hull_type)
+            inst_spec = uc_hulls(wavelengths, 1.0 - inst_spec, self.hull_type)
         else:
-            lib_spec = get_absorption(wavelengths, lib_spec, self.hull_type)
-            inst_spec = get_absorption(wavelengths, inst_spec, self.hull_type)
+            lib_spec = uc_hulls(wavelengths, lib_spec, self.hull_type)
+            inst_spec = uc_hulls(wavelengths, inst_spec, self.hull_type)
 
         lib_spec = np.nan_to_num(lib_spec)
         inst_spec = np.nan_to_num(inst_spec)
@@ -508,11 +506,11 @@ class SpectralMix(object):
         sf = None
         temp_spectrum = None
         if self.tir:
-            actual_spectrum = get_absorption(wavelengths, 1.0 - actual_spectrum, 1)
+            actual_spectrum = uc_hulls(wavelengths, 1.0 - actual_spectrum, 1)
             sf = np.max(actual_spectrum) / np.max(synthetic_spectrum)
         if self.hull:
-            hull = get_absorption(wavelengths, actual_spectrum, 2)
-            temp_spectrum = get_absorption(wavelengths, actual_spectrum, 1)
+            hull = uc_hulls(wavelengths, actual_spectrum, 2)
+            temp_spectrum = uc_hulls(wavelengths, actual_spectrum, 1)
             sf = np.max(temp_spectrum) / np.max(synthetic_spectrum)
 
         if sf is None:
@@ -613,11 +611,11 @@ class SpectralMix(object):
         sf = None
         temp_spectrum = None
         if self.tir:
-            actual_spectrum = get_absorption(wavelengths, 1.0 - actual_spectrum, 1)
+            actual_spectrum = uc_hulls(wavelengths, 1.0 - actual_spectrum, 1)
             sf = np.max(actual_spectrum) / np.max(synthetic_spectrum)
         if self.hull:
-            hull = get_absorption(wavelengths, actual_spectrum, 2)
-            temp_spectrum = get_absorption(wavelengths, actual_spectrum, 1)
+            hull = uc_hulls(wavelengths, actual_spectrum, 2)
+            temp_spectrum = uc_hulls(wavelengths, actual_spectrum, 1)
             sf = np.max(temp_spectrum) / np.max(synthetic_spectrum)
 
         if sf is None:
@@ -1172,7 +1170,7 @@ class SpectralMix(object):
                 else:
                     use_tsg_colors = False
 
-            color_data = pd.read_csv("spex/data/spectral_libraries/working_up_colours.csv")
+            color_data = pd.read_csv("./working_up_colours.csv")
             for val in np.unique(temp_df['group']):
                 unique_minerals = np.unique(temp_df[temp_df['group'] == val][what_thing])
                 number_of_minerals = unique_minerals.shape[0]
@@ -1299,7 +1297,7 @@ class SpectralMix(object):
 
             # todo add in a bit for group plots not just mineral
             data = []
-            color_data = pd.read_csv("spex/data/spectral_libraries/working_up_colours_mkII.csv")
+            color_data = pd.read_csv("./spectral_libraries/working_up_colours_mkII.csv")
             for val in np.unique(temp_df['group']):
                 unique_minerals = np.unique(temp_df[temp_df['group'] == val][what_thing])
                 number_of_minerals = unique_minerals.shape[0]
@@ -1360,9 +1358,9 @@ class SpectralMix(object):
         spectra = self.instrument_library_spectra[:, self.range_indices[0]:self.range_indices[1]]
         if plot_hull:
             if tir:
-                spectra = get_absorption(wavelengths, 1.0 - spectra, 1)
+                spectra = uc_hulls(wavelengths, 1.0 - spectra, 1)
             else:
-                spectra = get_absorption(wavelengths, spectra, 1)
+                spectra = uc_hulls(wavelengths, spectra, 1)
 
         indices = df.loc[df[search_item].isin(names)].index.values
         if len(indices) > 0:
@@ -1391,7 +1389,7 @@ class SpectralMix(object):
 
         instrument_data = self.spectral_input[index, self.range_indices[0]:self.range_indices[1]]
         if hull:
-            instrument_data = get_absorption(wavelengths, instrument_data, 1)
+            instrument_data = uc_hulls(wavelengths, instrument_data, 1)
         if normalise:
             instrument_data = instrument_data / np.max(instrument_data)
 
@@ -1401,7 +1399,7 @@ class SpectralMix(object):
             for val in indices:
                 spectrum = spectra[val, :]
                 if hull:
-                    spectrum = get_absorption(wavelengths, spectrum, 1)
+                    spectrum = uc_hulls(wavelengths, spectrum, 1)
                 if normalise:
                     spectrum = spectrum / np.max(spectrum)
                 plt.plot(wavelengths, spectrum, label=df[search_type].iloc[val])

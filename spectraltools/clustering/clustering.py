@@ -1,3 +1,5 @@
+import numpy as np
+
 def cluster_features(self, features_to_include=None, number_of_features=2, feature=0,
                          min_cluster_size=5, min_samples=None, cluster_selection_epsilon=0.0,
                          cluster_selection_method='eom', allow_single_cluster=False, prediction_data=False):
