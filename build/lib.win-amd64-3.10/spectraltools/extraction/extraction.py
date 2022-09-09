@@ -12,7 +12,7 @@ import numpy as np
 from numpy.polynomial.chebyshev import Chebyshev as cheb
 from numpy.typing import NDArray
 from scipy.signal import find_peaks
-from spectraltools.ext import chulls
+from spectraltools.convexhulls import uc_hulls
 
 warnings.simplefilter('ignore', np.RankWarning)  # stop polyfit rankwarnings
 
@@ -271,10 +271,10 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
     def _hulls_if_required(ordinates_in: NDArray, spectral_array: NDArray, do_hull: bool = False, hull_type: int = 0) -> NDArray:
         # run a hull process if required
         if do_hull:
-            spectral_array = chulls.get_absorption(ordinates_in, spectral_array, hull_type=hull_type)
+            spectral_array = uc_hulls(ordinates_in, spectral_array, hull_type=hull_type)
         if hull_type == 3:
             # do a baseline correction. Should really only do this for spectral data
-            spectral_array = chulls.get_absorption(ordinates_in, 1.0 - spectral_array, hull_type=1)
+            spectral_array = uc_hulls(ordinates_in, 1.0 - spectral_array, hull_type=1)
         return spectral_array
 
 
@@ -333,7 +333,7 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
     spectral_array = _hulls_if_required(ordinates_in, spectral_array, do_hull=do_hull, hull_type=hull_type)
 
     if spectral_array.ndim == 1:
-        # TODO This could be run in multiprocessing
+        # This could be run in multiprocessing
         for signal in _generator(spectral_array):
             # return the peaks_ordinates, prominences and widths
             feature_info.append(
@@ -651,10 +651,10 @@ class FeatureExtraction:
     def _hulls_if_required(self, ordinates_in, spectral_array):
         # run a hull process if required
         if self.do_hull:
-            spectral_array = chulls.get_absorption(ordinates_in, spectral_array, hull_type=self.hull_type)
+            spectral_array = uc_hulls(ordinates_in, spectral_array, hull_type=self.hull_type)
         if self.hull_type == 3:
             # do a baseline correction. Should really only do this for spectral data
-            spectral_array = chulls.get_absorption(ordinates_in, 1.0 - spectral_array, hull_type=1)
+            spectral_array = uc_hulls(ordinates_in, 1.0 - spectral_array, hull_type=1)
         return spectral_array
 
 

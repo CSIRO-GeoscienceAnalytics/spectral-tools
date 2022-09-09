@@ -1,12 +1,8 @@
-""" The parse_tsg Module
-"""
-
-#import io
 import re
 import struct
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, NamedTuple, Tuple, Union
+from typing import Any, NamedTuple, Union
 
 import numpy as np
 import pandas as pd

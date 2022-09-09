@@ -970,6 +970,13 @@ static const char *__pyx_f[] = {
   "chulls.pyx",
   "stringsource",
 };
+/* NoFastGil.proto */
+#define __Pyx_PyGILState_Ensure PyGILState_Ensure
+#define __Pyx_PyGILState_Release PyGILState_Release
+#define __Pyx_FastGIL_Remember()
+#define __Pyx_FastGIL_Forget()
+#define __Pyx_FastGilFuncInit()
+
 /* MemviewSliceStruct.proto */
 struct __pyx_memoryview_obj;
 typedef struct {
@@ -1025,13 +1032,6 @@ typedef volatile __pyx_atomic_int_type __pyx_atomic_int;
     #define __pyx_sub_acquisition_count(memview)\
             __pyx_sub_acquisition_count_locked(__pyx_get_slice_count_pointer(memview), memview->lock)
 #endif
-
-/* NoFastGil.proto */
-#define __Pyx_PyGILState_Ensure PyGILState_Ensure
-#define __Pyx_PyGILState_Release PyGILState_Release
-#define __Pyx_FastGIL_Remember()
-#define __Pyx_FastGIL_Forget()
-#define __Pyx_FastGilFuncInit()
 
 /* ForceInitThreads.proto */
 #ifndef __PYX_FORCE_INIT_THREADS
@@ -1280,6 +1280,32 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject
 /* GetBuiltinName.proto */
 static PyObject *__Pyx_GetBuiltinName(PyObject *name);
 
+/* MemviewSliceInit.proto */
+#define __Pyx_BUF_MAX_NDIMS %(BUF_MAX_NDIMS)d
+#define __Pyx_MEMVIEW_DIRECT   1
+#define __Pyx_MEMVIEW_PTR      2
+#define __Pyx_MEMVIEW_FULL     4
+#define __Pyx_MEMVIEW_CONTIG   8
+#define __Pyx_MEMVIEW_STRIDED  16
+#define __Pyx_MEMVIEW_FOLLOW   32
+#define __Pyx_IS_C_CONTIG 1
+#define __Pyx_IS_F_CONTIG 2
+static int __Pyx_init_memviewslice(
+                struct __pyx_memoryview_obj *memview,
+                int ndim,
+                __Pyx_memviewslice *memviewslice,
+                int memview_is_new_reference);
+static CYTHON_INLINE int __pyx_add_acquisition_count_locked(
+    __pyx_atomic_int *acquisition_count, PyThread_type_lock lock);
+static CYTHON_INLINE int __pyx_sub_acquisition_count_locked(
+    __pyx_atomic_int *acquisition_count, PyThread_type_lock lock);
+#define __pyx_get_slice_count_pointer(memview) (memview->acquisition_count_aligned_p)
+#define __pyx_get_slice_count(memview) (*__pyx_get_slice_count_pointer(memview))
+#define __PYX_INC_MEMVIEW(slice, have_gil) __Pyx_INC_MEMVIEW(slice, have_gil, __LINE__)
+#define __PYX_XDEC_MEMVIEW(slice, have_gil) __Pyx_XDEC_MEMVIEW(slice, have_gil, __LINE__)
+static CYTHON_INLINE void __Pyx_INC_MEMVIEW(__Pyx_memviewslice *, int, int);
+static CYTHON_INLINE void __Pyx_XDEC_MEMVIEW(__Pyx_memviewslice *, int, int);
+
 /* RaiseArgTupleInvalid.proto */
 static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
     Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
@@ -1397,32 +1423,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObjec
 
 /* PyIntCompare.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_EqObjC(PyObject *op1, PyObject *op2, long intval, long inplace);
-
-/* MemviewSliceInit.proto */
-#define __Pyx_BUF_MAX_NDIMS %(BUF_MAX_NDIMS)d
-#define __Pyx_MEMVIEW_DIRECT   1
-#define __Pyx_MEMVIEW_PTR      2
-#define __Pyx_MEMVIEW_FULL     4
-#define __Pyx_MEMVIEW_CONTIG   8
-#define __Pyx_MEMVIEW_STRIDED  16
-#define __Pyx_MEMVIEW_FOLLOW   32
-#define __Pyx_IS_C_CONTIG 1
-#define __Pyx_IS_F_CONTIG 2
-static int __Pyx_init_memviewslice(
-                struct __pyx_memoryview_obj *memview,
-                int ndim,
-                __Pyx_memviewslice *memviewslice,
-                int memview_is_new_reference);
-static CYTHON_INLINE int __pyx_add_acquisition_count_locked(
-    __pyx_atomic_int *acquisition_count, PyThread_type_lock lock);
-static CYTHON_INLINE int __pyx_sub_acquisition_count_locked(
-    __pyx_atomic_int *acquisition_count, PyThread_type_lock lock);
-#define __pyx_get_slice_count_pointer(memview) (memview->acquisition_count_aligned_p)
-#define __pyx_get_slice_count(memview) (*__pyx_get_slice_count_pointer(memview))
-#define __PYX_INC_MEMVIEW(slice, have_gil) __Pyx_INC_MEMVIEW(slice, have_gil, __LINE__)
-#define __PYX_XDEC_MEMVIEW(slice, have_gil) __Pyx_XDEC_MEMVIEW(slice, have_gil, __LINE__)
-static CYTHON_INLINE void __Pyx_INC_MEMVIEW(__Pyx_memviewslice *, int, int);
-static CYTHON_INLINE void __Pyx_XDEC_MEMVIEW(__Pyx_memviewslice *, int, int);
 
 /* PyThreadStateGet.proto */
 #if CYTHON_FAST_THREAD_STATE
@@ -1917,8 +1917,8 @@ extern int __pyx_module_is_main_chulls;
 int __pyx_module_is_main_chulls = 0;
 
 /* Implementation of 'chulls' */
-static PyObject *__pyx_builtin_NotImplementedError;
 static PyObject *__pyx_builtin_range;
+static PyObject *__pyx_builtin_NotImplementedError;
 static PyObject *__pyx_builtin_ValueError;
 static PyObject *__pyx_builtin_MemoryError;
 static PyObject *__pyx_builtin_enumerate;
@@ -1962,7 +1962,6 @@ static const char __pyx_k_reduce[] = "__reduce__";
 static const char __pyx_k_struct[] = "struct";
 static const char __pyx_k_unpack[] = "unpack";
 static const char __pyx_k_update[] = "update";
-static const char __pyx_k_NDArray[] = "NDArray";
 static const char __pyx_k_fortran[] = "fortran";
 static const char __pyx_k_memview[] = "memview";
 static const char __pyx_k_spectra[] = "spectra";
@@ -1986,7 +1985,6 @@ static const char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
 static const char __pyx_k_MemoryError[] = "MemoryError";
 static const char __pyx_k_PickleError[] = "PickleError";
 static const char __pyx_k_wavelengths[] = "wavelengths";
-static const char __pyx_k_numpy_typing[] = "numpy.typing";
 static const char __pyx_k_pyx_checksum[] = "__pyx_checksum";
 static const char __pyx_k_stringsource[] = "stringsource";
 static const char __pyx_k_pyx_getbuffer[] = "__pyx_getbuffer";
@@ -2043,7 +2041,6 @@ static PyObject *__pyx_kp_s_Invalid_shape_in_axis_d_d;
 static PyObject *__pyx_n_s_MemoryError;
 static PyObject *__pyx_kp_s_MemoryView_of_r_at_0x_x;
 static PyObject *__pyx_kp_s_MemoryView_of_r_object;
-static PyObject *__pyx_n_s_NDArray;
 static PyObject *__pyx_n_s_NotImplementedError;
 static PyObject *__pyx_n_b_O;
 static PyObject *__pyx_kp_s_Out_of_bounds_on_buffer_access_a;
@@ -2093,7 +2090,6 @@ static PyObject *__pyx_n_s_ndim;
 static PyObject *__pyx_n_s_new;
 static PyObject *__pyx_kp_s_no_default___reduce___due_to_non;
 static PyObject *__pyx_n_s_numpy;
-static PyObject *__pyx_n_s_numpy_typing;
 static PyObject *__pyx_n_s_obj;
 static PyObject *__pyx_n_s_pack;
 static PyObject *__pyx_n_s_pickle;
@@ -2214,475 +2210,7 @@ static PyObject *__pyx_codeobj__22;
 static PyObject *__pyx_codeobj__29;
 /* Late includes */
 
-/* "chulls.pyx":9
- * cdef int NUM_THREADS = cpu_count()
- * 
- * def get_absorption(wavelengths, spectra, hull_type):             # <<<<<<<<<<<<<<
- *     """
- *     Modified: Andrew Rodger, CSIRO Mineral Resources (15/02/2020)
- */
-
-/* Python wrapper */
-static PyObject *__pyx_pw_6chulls_1get_absorption(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6chulls_get_absorption[] = "get_absorption(wavelengths, spectra, hull_type)\n\n    Modified: Andrew Rodger, CSIRO Mineral Resources (15/02/2020)\n\n    Original author: Jess Robertson, CSIRO Mineral Resources\n\n    date: March 2016\n\n    (sk)Hulls for the skull god!\n\n    Apply a hull correction to incoming spectral data, or alternatively return the hull of the spectra\n\n    Args:\n        spectra (ndarray): the spectral data for processing. Can be a single spectrum, or N samples (NxB), or an image (NxMxB)\n        wavelengths (ndarray): the wavelengths corresponding to the spectral data\n        hull_type (int): 0 is hull quotient (1.0 - spectrum/hull), 1 is hull removed (hull - spectrum), and 2 is the actual sk(Hull)\n\n    Returns:\n        ndarray: an array (the same shape as spectral data array) of hull corrected spectra\n\n    ";
-static PyMethodDef __pyx_mdef_6chulls_1get_absorption = {"get_absorption", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6chulls_1get_absorption, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6chulls_get_absorption};
-static PyObject *__pyx_pw_6chulls_1get_absorption(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
-  PyObject *__pyx_v_wavelengths = 0;
-  PyObject *__pyx_v_spectra = 0;
-  PyObject *__pyx_v_hull_type = 0;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
-  PyObject *__pyx_r = 0;
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("get_absorption (wrapper)", 0);
-  {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_wavelengths,&__pyx_n_s_spectra,&__pyx_n_s_hull_type,0};
-    PyObject* values[3] = {0,0,0};
-    if (unlikely(__pyx_kwds)) {
-      Py_ssize_t kw_args;
-      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
-      switch (pos_args) {
-        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
-        CYTHON_FALLTHROUGH;
-        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-        CYTHON_FALLTHROUGH;
-        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-        CYTHON_FALLTHROUGH;
-        case  0: break;
-        default: goto __pyx_L5_argtuple_error;
-      }
-      kw_args = PyDict_Size(__pyx_kwds);
-      switch (pos_args) {
-        case  0:
-        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_wavelengths)) != 0)) kw_args--;
-        else goto __pyx_L5_argtuple_error;
-        CYTHON_FALLTHROUGH;
-        case  1:
-        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_spectra)) != 0)) kw_args--;
-        else {
-          __Pyx_RaiseArgtupleInvalid("get_absorption", 1, 3, 3, 1); __PYX_ERR(0, 9, __pyx_L3_error)
-        }
-        CYTHON_FALLTHROUGH;
-        case  2:
-        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_hull_type)) != 0)) kw_args--;
-        else {
-          __Pyx_RaiseArgtupleInvalid("get_absorption", 1, 3, 3, 2); __PYX_ERR(0, 9, __pyx_L3_error)
-        }
-      }
-      if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_absorption") < 0)) __PYX_ERR(0, 9, __pyx_L3_error)
-      }
-    } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
-      goto __pyx_L5_argtuple_error;
-    } else {
-      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
-    }
-    __pyx_v_wavelengths = values[0];
-    __pyx_v_spectra = values[1];
-    __pyx_v_hull_type = values[2];
-  }
-  goto __pyx_L4_argument_unpacking_done;
-  __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_absorption", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 9, __pyx_L3_error)
-  __pyx_L3_error:;
-  __Pyx_AddTraceback("chulls.get_absorption", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __Pyx_RefNannyFinishContext();
-  return NULL;
-  __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6chulls_get_absorption(__pyx_self, __pyx_v_wavelengths, __pyx_v_spectra, __pyx_v_hull_type);
-
-  /* function exit code */
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-static PyObject *__pyx_pf_6chulls_get_absorption(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_wavelengths, PyObject *__pyx_v_spectra, PyObject *__pyx_v_hull_type) {
-  PyObject *__pyx_v_absorption = NULL;
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
-  PyObject *__pyx_t_2 = NULL;
-  PyObject *__pyx_t_3 = NULL;
-  int __pyx_t_4;
-  __Pyx_memviewslice __pyx_t_5 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_6 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_7 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  int __pyx_t_8;
-  __Pyx_memviewslice __pyx_t_9 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_10 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_11 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_12 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("get_absorption", 0);
-  __Pyx_INCREF(__pyx_v_wavelengths);
-  __Pyx_INCREF(__pyx_v_spectra);
-  __Pyx_INCREF(__pyx_v_hull_type);
-
-  /* "chulls.pyx":31
- *     """
- *     # make the arrays doubles
- *     spectra = double(spectra)             # <<<<<<<<<<<<<<
- *     wavelengths = double(wavelengths)
- * 
- */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_double); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 31, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = NULL;
-  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
-    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
-    if (likely(__pyx_t_3)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-      __Pyx_INCREF(__pyx_t_3);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_2, function);
-    }
-  }
-  __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_spectra) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_spectra);
-  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __Pyx_DECREF_SET(__pyx_v_spectra, __pyx_t_1);
-  __pyx_t_1 = 0;
-
-  /* "chulls.pyx":32
- *     # make the arrays doubles
- *     spectra = double(spectra)
- *     wavelengths = double(wavelengths)             # <<<<<<<<<<<<<<
- * 
- *     # Allocate some memory for absorptions
- */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_double); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 32, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = NULL;
-  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
-    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
-    if (likely(__pyx_t_3)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-      __Pyx_INCREF(__pyx_t_3);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_2, function);
-    }
-  }
-  __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_wavelengths) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_wavelengths);
-  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 32, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __Pyx_DECREF_SET(__pyx_v_wavelengths, __pyx_t_1);
-  __pyx_t_1 = 0;
-
-  /* "chulls.pyx":35
- * 
- *     # Allocate some memory for absorptions
- *     absorption = empty(shape=spectra.shape)             # <<<<<<<<<<<<<<
- * 
- *     # see if its the hull quotient or hull removed
- */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 35, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 35, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_spectra, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 35, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_shape, __pyx_t_3) < 0) __PYX_ERR(0, 35, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 35, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_v_absorption = __pyx_t_3;
-  __pyx_t_3 = 0;
-
-  /* "chulls.pyx":38
- * 
- *     # see if its the hull quotient or hull removed
- *     if hull_type == 0:             # <<<<<<<<<<<<<<
- *         hull_type = 0
- *     elif hull_type == 1:
- */
-  __pyx_t_3 = __Pyx_PyInt_EqObjC(__pyx_v_hull_type, __pyx_int_0, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 38, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 38, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__pyx_t_4) {
-
-    /* "chulls.pyx":39
- *     # see if its the hull quotient or hull removed
- *     if hull_type == 0:
- *         hull_type = 0             # <<<<<<<<<<<<<<
- *     elif hull_type == 1:
- *         hull_type = 1
- */
-    __Pyx_INCREF(__pyx_int_0);
-    __Pyx_DECREF_SET(__pyx_v_hull_type, __pyx_int_0);
-
-    /* "chulls.pyx":38
- * 
- *     # see if its the hull quotient or hull removed
- *     if hull_type == 0:             # <<<<<<<<<<<<<<
- *         hull_type = 0
- *     elif hull_type == 1:
- */
-    goto __pyx_L3;
-  }
-
-  /* "chulls.pyx":40
- *     if hull_type == 0:
- *         hull_type = 0
- *     elif hull_type == 1:             # <<<<<<<<<<<<<<
- *         hull_type = 1
- *     else:
- */
-  __pyx_t_3 = __Pyx_PyInt_EqObjC(__pyx_v_hull_type, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 40, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 40, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__pyx_t_4) {
-
-    /* "chulls.pyx":41
- *         hull_type = 0
- *     elif hull_type == 1:
- *         hull_type = 1             # <<<<<<<<<<<<<<
- *     else:
- *         hull_type = 2
- */
-    __Pyx_INCREF(__pyx_int_1);
-    __Pyx_DECREF_SET(__pyx_v_hull_type, __pyx_int_1);
-
-    /* "chulls.pyx":40
- *     if hull_type == 0:
- *         hull_type = 0
- *     elif hull_type == 1:             # <<<<<<<<<<<<<<
- *         hull_type = 1
- *     else:
- */
-    goto __pyx_L3;
-  }
-
-  /* "chulls.pyx":43
- *         hull_type = 1
- *     else:
- *         hull_type = 2             # <<<<<<<<<<<<<<
- * 
- *     # Do lookup for dimension-specific call
- */
-  /*else*/ {
-    __Pyx_INCREF(__pyx_int_2);
-    __Pyx_DECREF_SET(__pyx_v_hull_type, __pyx_int_2);
-  }
-  __pyx_L3:;
-
-  /* "chulls.pyx":46
- * 
- *     # Do lookup for dimension-specific call
- *     if (spectra.ndim == 1):             # <<<<<<<<<<<<<<
- *         extract_hull_0d(spectra, absorption, wavelengths, hull_type)
- * 
- */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_spectra, __pyx_n_s_ndim); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 46, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyInt_EqObjC(__pyx_t_3, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 46, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 46, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (__pyx_t_4) {
-
-    /* "chulls.pyx":47
- *     # Do lookup for dimension-specific call
- *     if (spectra.ndim == 1):
- *         extract_hull_0d(spectra, absorption, wavelengths, hull_type)             # <<<<<<<<<<<<<<
- * 
- *     elif (spectra.ndim == 2):
- */
-    __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_v_spectra, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 47, __pyx_L1_error)
-    __pyx_t_6 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_v_absorption, PyBUF_WRITABLE); if (unlikely(!__pyx_t_6.memview)) __PYX_ERR(0, 47, __pyx_L1_error)
-    __pyx_t_7 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_v_wavelengths, PyBUF_WRITABLE); if (unlikely(!__pyx_t_7.memview)) __PYX_ERR(0, 47, __pyx_L1_error)
-    __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_v_hull_type); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 47, __pyx_L1_error)
-    __pyx_f_6chulls_extract_hull_0d(__pyx_t_5, __pyx_t_6, __pyx_t_7, __pyx_t_8);
-    __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
-    __pyx_t_5.memview = NULL;
-    __pyx_t_5.data = NULL;
-    __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
-    __pyx_t_6.memview = NULL;
-    __pyx_t_6.data = NULL;
-    __PYX_XDEC_MEMVIEW(&__pyx_t_7, 1);
-    __pyx_t_7.memview = NULL;
-    __pyx_t_7.data = NULL;
-
-    /* "chulls.pyx":46
- * 
- *     # Do lookup for dimension-specific call
- *     if (spectra.ndim == 1):             # <<<<<<<<<<<<<<
- *         extract_hull_0d(spectra, absorption, wavelengths, hull_type)
- * 
- */
-    goto __pyx_L4;
-  }
-
-  /* "chulls.pyx":49
- *         extract_hull_0d(spectra, absorption, wavelengths, hull_type)
- * 
- *     elif (spectra.ndim == 2):             # <<<<<<<<<<<<<<
- *         extract_hull_1d(spectra, absorption, wavelengths, hull_type)
- * 
- */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_spectra, __pyx_n_s_ndim); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 49, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyInt_EqObjC(__pyx_t_2, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 49, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 49, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__pyx_t_4) {
-
-    /* "chulls.pyx":50
- * 
- *     elif (spectra.ndim == 2):
- *         extract_hull_1d(spectra, absorption, wavelengths, hull_type)             # <<<<<<<<<<<<<<
- * 
- *     elif (spectra.ndim == 3):
- */
-    __pyx_t_9 = __Pyx_PyObject_to_MemoryviewSlice_dsds_double(__pyx_v_spectra, PyBUF_WRITABLE); if (unlikely(!__pyx_t_9.memview)) __PYX_ERR(0, 50, __pyx_L1_error)
-    __pyx_t_10 = __Pyx_PyObject_to_MemoryviewSlice_dsds_double(__pyx_v_absorption, PyBUF_WRITABLE); if (unlikely(!__pyx_t_10.memview)) __PYX_ERR(0, 50, __pyx_L1_error)
-    __pyx_t_7 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_v_wavelengths, PyBUF_WRITABLE); if (unlikely(!__pyx_t_7.memview)) __PYX_ERR(0, 50, __pyx_L1_error)
-    __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_v_hull_type); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 50, __pyx_L1_error)
-    __pyx_f_6chulls_extract_hull_1d(__pyx_t_9, __pyx_t_10, __pyx_t_7, __pyx_t_8);
-    __PYX_XDEC_MEMVIEW(&__pyx_t_9, 1);
-    __pyx_t_9.memview = NULL;
-    __pyx_t_9.data = NULL;
-    __PYX_XDEC_MEMVIEW(&__pyx_t_10, 1);
-    __pyx_t_10.memview = NULL;
-    __pyx_t_10.data = NULL;
-    __PYX_XDEC_MEMVIEW(&__pyx_t_7, 1);
-    __pyx_t_7.memview = NULL;
-    __pyx_t_7.data = NULL;
-
-    /* "chulls.pyx":49
- *         extract_hull_0d(spectra, absorption, wavelengths, hull_type)
- * 
- *     elif (spectra.ndim == 2):             # <<<<<<<<<<<<<<
- *         extract_hull_1d(spectra, absorption, wavelengths, hull_type)
- * 
- */
-    goto __pyx_L4;
-  }
-
-  /* "chulls.pyx":52
- *         extract_hull_1d(spectra, absorption, wavelengths, hull_type)
- * 
- *     elif (spectra.ndim == 3):             # <<<<<<<<<<<<<<
- *         extract_hull_2d(spectra, absorption, wavelengths, hull_type)
- *     else:
- */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_spectra, __pyx_n_s_ndim); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 52, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyInt_EqObjC(__pyx_t_3, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 52, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 52, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (likely(__pyx_t_4)) {
-
-    /* "chulls.pyx":53
- * 
- *     elif (spectra.ndim == 3):
- *         extract_hull_2d(spectra, absorption, wavelengths, hull_type)             # <<<<<<<<<<<<<<
- *     else:
- *         raise NotImplementedError(
- */
-    __pyx_t_11 = __Pyx_PyObject_to_MemoryviewSlice_dsdsds_double(__pyx_v_spectra, PyBUF_WRITABLE); if (unlikely(!__pyx_t_11.memview)) __PYX_ERR(0, 53, __pyx_L1_error)
-    __pyx_t_12 = __Pyx_PyObject_to_MemoryviewSlice_dsdsds_double(__pyx_v_absorption, PyBUF_WRITABLE); if (unlikely(!__pyx_t_12.memview)) __PYX_ERR(0, 53, __pyx_L1_error)
-    __pyx_t_7 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_v_wavelengths, PyBUF_WRITABLE); if (unlikely(!__pyx_t_7.memview)) __PYX_ERR(0, 53, __pyx_L1_error)
-    __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_v_hull_type); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 53, __pyx_L1_error)
-    __pyx_f_6chulls_extract_hull_2d(__pyx_t_11, __pyx_t_12, __pyx_t_7, __pyx_t_8);
-    __PYX_XDEC_MEMVIEW(&__pyx_t_11, 1);
-    __pyx_t_11.memview = NULL;
-    __pyx_t_11.data = NULL;
-    __PYX_XDEC_MEMVIEW(&__pyx_t_12, 1);
-    __pyx_t_12.memview = NULL;
-    __pyx_t_12.data = NULL;
-    __PYX_XDEC_MEMVIEW(&__pyx_t_7, 1);
-    __pyx_t_7.memview = NULL;
-    __pyx_t_7.data = NULL;
-
-    /* "chulls.pyx":52
- *         extract_hull_1d(spectra, absorption, wavelengths, hull_type)
- * 
- *     elif (spectra.ndim == 3):             # <<<<<<<<<<<<<<
- *         extract_hull_2d(spectra, absorption, wavelengths, hull_type)
- *     else:
- */
-    goto __pyx_L4;
-  }
-
-  /* "chulls.pyx":55
- *         extract_hull_2d(spectra, absorption, wavelengths, hull_type)
- *     else:
- *         raise NotImplementedError(             # <<<<<<<<<<<<<<
- *             'Extraction not available for raster dimension >= 3')
- *     return absorption
- */
-  /*else*/ {
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_NotImplementedError, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 55, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_Raise(__pyx_t_2, 0, 0, 0);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 55, __pyx_L1_error)
-  }
-  __pyx_L4:;
-
-  /* "chulls.pyx":57
- *         raise NotImplementedError(
- *             'Extraction not available for raster dimension >= 3')
- *     return absorption             # <<<<<<<<<<<<<<
- * 
- * # CYTHON CODE
- */
-  __Pyx_XDECREF(__pyx_r);
-  __Pyx_INCREF(__pyx_v_absorption);
-  __pyx_r = __pyx_v_absorption;
-  goto __pyx_L0;
-
-  /* "chulls.pyx":9
- * cdef int NUM_THREADS = cpu_count()
- * 
- * def get_absorption(wavelengths, spectra, hull_type):             # <<<<<<<<<<<<<<
- *     """
- *     Modified: Andrew Rodger, CSIRO Mineral Resources (15/02/2020)
- */
-
-  /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_XDECREF(__pyx_t_3);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_7, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_9, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_10, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_11, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_12, 1);
-  __Pyx_AddTraceback("chulls.get_absorption", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
-  __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v_absorption);
-  __Pyx_XDECREF(__pyx_v_wavelengths);
-  __Pyx_XDECREF(__pyx_v_spectra);
-  __Pyx_XDECREF(__pyx_v_hull_type);
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "chulls.pyx":62
+/* "chulls.pyx":10
  * @cython.cdivision(True)
  * @cython.boundscheck(False)
  * cdef void extract_subhull(double [:] spectrum, double [:] absorption,             # <<<<<<<<<<<<<<
@@ -2707,7 +2235,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
   int __pyx_t_9;
   int __pyx_t_10;
 
-  /* "chulls.pyx":75
+  /* "chulls.pyx":23
  *     """
  *     # Calculate trial hull given end points
  *     cdef int iidx, minidx = 0             # <<<<<<<<<<<<<<
@@ -2716,7 +2244,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
  */
   __pyx_v_minidx = 0;
 
-  /* "chulls.pyx":76
+  /* "chulls.pyx":24
  *     # Calculate trial hull given end points
  *     cdef int iidx, minidx = 0
  *     cdef double minabsorb = 0, hull = 0             # <<<<<<<<<<<<<<
@@ -2726,7 +2254,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
   __pyx_v_minabsorb = 0.0;
   __pyx_v_hull = 0.0;
 
-  /* "chulls.pyx":77
+  /* "chulls.pyx":25
  *     cdef int iidx, minidx = 0
  *     cdef double minabsorb = 0, hull = 0
  *     cdef double m = (spectrum[end] - spectrum[start]) \             # <<<<<<<<<<<<<<
@@ -2738,7 +2266,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
   __pyx_t_2 = __pyx_v_start;
   if (__pyx_t_2 < 0) __pyx_t_2 += __pyx_v_spectrum.shape[0];
 
-  /* "chulls.pyx":78
+  /* "chulls.pyx":26
  *     cdef double minabsorb = 0, hull = 0
  *     cdef double m = (spectrum[end] - spectrum[start]) \
  *                     / (wavelengths[end] - wavelengths[start])             # <<<<<<<<<<<<<<
@@ -2751,7 +2279,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
   if (__pyx_t_4 < 0) __pyx_t_4 += __pyx_v_wavelengths.shape[0];
   __pyx_v_m = (((*((double *) ( /* dim=0 */ (__pyx_v_spectrum.data + __pyx_t_1 * __pyx_v_spectrum.strides[0]) ))) - (*((double *) ( /* dim=0 */ (__pyx_v_spectrum.data + __pyx_t_2 * __pyx_v_spectrum.strides[0]) )))) / ((*((double *) ( /* dim=0 */ (__pyx_v_wavelengths.data + __pyx_t_3 * __pyx_v_wavelengths.strides[0]) ))) - (*((double *) ( /* dim=0 */ (__pyx_v_wavelengths.data + __pyx_t_4 * __pyx_v_wavelengths.strides[0]) )))));
 
-  /* "chulls.pyx":79
+  /* "chulls.pyx":27
  *     cdef double m = (spectrum[end] - spectrum[start]) \
  *                     / (wavelengths[end] - wavelengths[start])
  *     for iidx in range(start, end+1):             # <<<<<<<<<<<<<<
@@ -2763,7 +2291,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
   for (__pyx_t_7 = __pyx_v_start; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
     __pyx_v_iidx = __pyx_t_7;
 
-    /* "chulls.pyx":80
+    /* "chulls.pyx":28
  *                     / (wavelengths[end] - wavelengths[start])
  *     for iidx in range(start, end+1):
  *         hull = m * (wavelengths[iidx] - wavelengths[start]) + spectrum[start]             # <<<<<<<<<<<<<<
@@ -2778,7 +2306,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
     if (__pyx_t_2 < 0) __pyx_t_2 += __pyx_v_spectrum.shape[0];
     __pyx_v_hull = ((__pyx_v_m * ((*((double *) ( /* dim=0 */ (__pyx_v_wavelengths.data + __pyx_t_4 * __pyx_v_wavelengths.strides[0]) ))) - (*((double *) ( /* dim=0 */ (__pyx_v_wavelengths.data + __pyx_t_3 * __pyx_v_wavelengths.strides[0]) ))))) + (*((double *) ( /* dim=0 */ (__pyx_v_spectrum.data + __pyx_t_2 * __pyx_v_spectrum.strides[0]) ))));
 
-    /* "chulls.pyx":82
+    /* "chulls.pyx":30
  *         hull = m * (wavelengths[iidx] - wavelengths[start]) + spectrum[start]
  * 
  *         if (hull_type == 0):             # <<<<<<<<<<<<<<
@@ -2788,7 +2316,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
     switch (__pyx_v_hull_type) {
       case 0:
 
-      /* "chulls.pyx":83
+      /* "chulls.pyx":31
  * 
  *         if (hull_type == 0):
  *             absorption[iidx] = 0 if (hull == 0) else (1 - spectrum[iidx] / hull)             # <<<<<<<<<<<<<<
@@ -2806,7 +2334,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
       if (__pyx_t_2 < 0) __pyx_t_2 += __pyx_v_absorption.shape[0];
       *((double *) ( /* dim=0 */ (__pyx_v_absorption.data + __pyx_t_2 * __pyx_v_absorption.strides[0]) )) = __pyx_t_8;
 
-      /* "chulls.pyx":82
+      /* "chulls.pyx":30
  *         hull = m * (wavelengths[iidx] - wavelengths[start]) + spectrum[start]
  * 
  *         if (hull_type == 0):             # <<<<<<<<<<<<<<
@@ -2816,7 +2344,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
       break;
       case 1:
 
-      /* "chulls.pyx":85
+      /* "chulls.pyx":33
  *             absorption[iidx] = 0 if (hull == 0) else (1 - spectrum[iidx] / hull)
  *         elif (hull_type ==1):
  *             absorption[iidx] = 0 if (hull == 0) else (hull - spectrum[iidx])             # <<<<<<<<<<<<<<
@@ -2834,7 +2362,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
       if (__pyx_t_2 < 0) __pyx_t_2 += __pyx_v_absorption.shape[0];
       *((double *) ( /* dim=0 */ (__pyx_v_absorption.data + __pyx_t_2 * __pyx_v_absorption.strides[0]) )) = __pyx_t_8;
 
-      /* "chulls.pyx":84
+      /* "chulls.pyx":32
  *         if (hull_type == 0):
  *             absorption[iidx] = 0 if (hull == 0) else (1 - spectrum[iidx] / hull)
  *         elif (hull_type ==1):             # <<<<<<<<<<<<<<
@@ -2844,7 +2372,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
       break;
       default:
 
-      /* "chulls.pyx":87
+      /* "chulls.pyx":35
  *             absorption[iidx] = 0 if (hull == 0) else (hull - spectrum[iidx])
  *         else:
  *             absorption[iidx] = 0 if (hull == 0) else (hull - spectrum[iidx])             # <<<<<<<<<<<<<<
@@ -2864,7 +2392,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
       break;
     }
 
-    /* "chulls.pyx":90
+    /* "chulls.pyx":38
  * 
  *         # Make sure we keep the minimum absorption around
  *         if absorption[iidx] < minabsorb:             # <<<<<<<<<<<<<<
@@ -2876,7 +2404,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
     __pyx_t_9 = (((*((double *) ( /* dim=0 */ (__pyx_v_absorption.data + __pyx_t_2 * __pyx_v_absorption.strides[0]) ))) < __pyx_v_minabsorb) != 0);
     if (__pyx_t_9) {
 
-      /* "chulls.pyx":91
+      /* "chulls.pyx":39
  *         # Make sure we keep the minimum absorption around
  *         if absorption[iidx] < minabsorb:
  *             minabsorb = absorption[iidx]             # <<<<<<<<<<<<<<
@@ -2887,7 +2415,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
       if (__pyx_t_2 < 0) __pyx_t_2 += __pyx_v_absorption.shape[0];
       __pyx_v_minabsorb = (*((double *) ( /* dim=0 */ (__pyx_v_absorption.data + __pyx_t_2 * __pyx_v_absorption.strides[0]) )));
 
-      /* "chulls.pyx":92
+      /* "chulls.pyx":40
  *         if absorption[iidx] < minabsorb:
  *             minabsorb = absorption[iidx]
  *             minidx = iidx             # <<<<<<<<<<<<<<
@@ -2896,7 +2424,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
  */
       __pyx_v_minidx = __pyx_v_iidx;
 
-      /* "chulls.pyx":90
+      /* "chulls.pyx":38
  * 
  *         # Make sure we keep the minimum absorption around
  *         if absorption[iidx] < minabsorb:             # <<<<<<<<<<<<<<
@@ -2905,7 +2433,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
  */
     }
 
-    /* "chulls.pyx":93
+    /* "chulls.pyx":41
  *             minabsorb = absorption[iidx]
  *             minidx = iidx
  *         if hull_type == 2:             # <<<<<<<<<<<<<<
@@ -2915,7 +2443,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
     __pyx_t_9 = ((__pyx_v_hull_type == 2) != 0);
     if (__pyx_t_9) {
 
-      /* "chulls.pyx":94
+      /* "chulls.pyx":42
  *             minidx = iidx
  *         if hull_type == 2:
  *             if hull >= absorption[iidx]:             # <<<<<<<<<<<<<<
@@ -2927,7 +2455,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
       __pyx_t_9 = ((__pyx_v_hull >= (*((double *) ( /* dim=0 */ (__pyx_v_absorption.data + __pyx_t_2 * __pyx_v_absorption.strides[0]) )))) != 0);
       if (__pyx_t_9) {
 
-        /* "chulls.pyx":95
+        /* "chulls.pyx":43
  *         if hull_type == 2:
  *             if hull >= absorption[iidx]:
  *                 absorption[iidx] = hull             # <<<<<<<<<<<<<<
@@ -2938,7 +2466,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
         if (__pyx_t_2 < 0) __pyx_t_2 += __pyx_v_absorption.shape[0];
         *((double *) ( /* dim=0 */ (__pyx_v_absorption.data + __pyx_t_2 * __pyx_v_absorption.strides[0]) )) = __pyx_v_hull;
 
-        /* "chulls.pyx":94
+        /* "chulls.pyx":42
  *             minidx = iidx
  *         if hull_type == 2:
  *             if hull >= absorption[iidx]:             # <<<<<<<<<<<<<<
@@ -2947,7 +2475,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
  */
       }
 
-      /* "chulls.pyx":93
+      /* "chulls.pyx":41
  *             minabsorb = absorption[iidx]
  *             minidx = iidx
  *         if hull_type == 2:             # <<<<<<<<<<<<<<
@@ -2957,7 +2485,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
     }
   }
 
-  /* "chulls.pyx":98
+  /* "chulls.pyx":46
  * 
  *     # Determine whether we need to subdivide the hull
  *     if (minabsorb < 0):             # <<<<<<<<<<<<<<
@@ -2967,7 +2495,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
   __pyx_t_9 = ((__pyx_v_minabsorb < 0.0) != 0);
   if (__pyx_t_9) {
 
-    /* "chulls.pyx":100
+    /* "chulls.pyx":48
  *     if (minabsorb < 0):
  *         # Check upper half
  *         if minidx - start > 0 and minidx != end:             # <<<<<<<<<<<<<<
@@ -2985,7 +2513,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
     __pyx_L10_bool_binop_done:;
     if (__pyx_t_9) {
 
-      /* "chulls.pyx":101
+      /* "chulls.pyx":49
  *         # Check upper half
  *         if minidx - start > 0 and minidx != end:
  *             extract_subhull(spectrum, absorption, wavelengths, start, minidx, hull_type)             # <<<<<<<<<<<<<<
@@ -2994,7 +2522,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
  */
       __pyx_f_6chulls_extract_subhull(__pyx_v_spectrum, __pyx_v_absorption, __pyx_v_wavelengths, __pyx_v_start, __pyx_v_minidx, __pyx_v_hull_type);
 
-      /* "chulls.pyx":100
+      /* "chulls.pyx":48
  *     if (minabsorb < 0):
  *         # Check upper half
  *         if minidx - start > 0 and minidx != end:             # <<<<<<<<<<<<<<
@@ -3004,7 +2532,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
       goto __pyx_L9;
     }
 
-    /* "chulls.pyx":103
+    /* "chulls.pyx":51
  *             extract_subhull(spectrum, absorption, wavelengths, start, minidx, hull_type)
  *         else:
  *             if (hull_type == 2):             # <<<<<<<<<<<<<<
@@ -3015,7 +2543,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
       __pyx_t_9 = ((__pyx_v_hull_type == 2) != 0);
       if (__pyx_t_9) {
 
-        /* "chulls.pyx":104
+        /* "chulls.pyx":52
  *         else:
  *             if (hull_type == 2):
  *                 absorption[minidx] = hull             # <<<<<<<<<<<<<<
@@ -3026,7 +2554,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
         if (__pyx_t_2 < 0) __pyx_t_2 += __pyx_v_absorption.shape[0];
         *((double *) ( /* dim=0 */ (__pyx_v_absorption.data + __pyx_t_2 * __pyx_v_absorption.strides[0]) )) = __pyx_v_hull;
 
-        /* "chulls.pyx":103
+        /* "chulls.pyx":51
  *             extract_subhull(spectrum, absorption, wavelengths, start, minidx, hull_type)
  *         else:
  *             if (hull_type == 2):             # <<<<<<<<<<<<<<
@@ -3036,7 +2564,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
         goto __pyx_L12;
       }
 
-      /* "chulls.pyx":106
+      /* "chulls.pyx":54
  *                 absorption[minidx] = hull
  *             else:
  *                 absorption[minidx] = 0             # <<<<<<<<<<<<<<
@@ -3052,7 +2580,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
     }
     __pyx_L9:;
 
-    /* "chulls.pyx":109
+    /* "chulls.pyx":57
  * 
  *         # Check lower half
  *         if end - minidx > 0 and minidx != start:             # <<<<<<<<<<<<<<
@@ -3070,7 +2598,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
     __pyx_L14_bool_binop_done:;
     if (__pyx_t_9) {
 
-      /* "chulls.pyx":110
+      /* "chulls.pyx":58
  *         # Check lower half
  *         if end - minidx > 0 and minidx != start:
  *             extract_subhull(spectrum, absorption, wavelengths, minidx, end, hull_type)             # <<<<<<<<<<<<<<
@@ -3079,7 +2607,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
  */
       __pyx_f_6chulls_extract_subhull(__pyx_v_spectrum, __pyx_v_absorption, __pyx_v_wavelengths, __pyx_v_minidx, __pyx_v_end, __pyx_v_hull_type);
 
-      /* "chulls.pyx":109
+      /* "chulls.pyx":57
  * 
  *         # Check lower half
  *         if end - minidx > 0 and minidx != start:             # <<<<<<<<<<<<<<
@@ -3089,7 +2617,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
       goto __pyx_L13;
     }
 
-    /* "chulls.pyx":112
+    /* "chulls.pyx":60
  *             extract_subhull(spectrum, absorption, wavelengths, minidx, end, hull_type)
  *         else:
  *             if (hull_type ==2):             # <<<<<<<<<<<<<<
@@ -3100,7 +2628,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
       __pyx_t_9 = ((__pyx_v_hull_type == 2) != 0);
       if (__pyx_t_9) {
 
-        /* "chulls.pyx":113
+        /* "chulls.pyx":61
  *         else:
  *             if (hull_type ==2):
  *                 absorption[minidx] = hull             # <<<<<<<<<<<<<<
@@ -3111,7 +2639,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
         if (__pyx_t_2 < 0) __pyx_t_2 += __pyx_v_absorption.shape[0];
         *((double *) ( /* dim=0 */ (__pyx_v_absorption.data + __pyx_t_2 * __pyx_v_absorption.strides[0]) )) = __pyx_v_hull;
 
-        /* "chulls.pyx":112
+        /* "chulls.pyx":60
  *             extract_subhull(spectrum, absorption, wavelengths, minidx, end, hull_type)
  *         else:
  *             if (hull_type ==2):             # <<<<<<<<<<<<<<
@@ -3121,7 +2649,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
         goto __pyx_L16;
       }
 
-      /* "chulls.pyx":115
+      /* "chulls.pyx":63
  *                 absorption[minidx] = hull
  *             else:
  *                 absorption[minidx] = 0             # <<<<<<<<<<<<<<
@@ -3137,7 +2665,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
     }
     __pyx_L13:;
 
-    /* "chulls.pyx":98
+    /* "chulls.pyx":46
  * 
  *     # Determine whether we need to subdivide the hull
  *     if (minabsorb < 0):             # <<<<<<<<<<<<<<
@@ -3146,7 +2674,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
  */
   }
 
-  /* "chulls.pyx":62
+  /* "chulls.pyx":10
  * @cython.cdivision(True)
  * @cython.boundscheck(False)
  * cdef void extract_subhull(double [:] spectrum, double [:] absorption,             # <<<<<<<<<<<<<<
@@ -3157,7 +2685,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
   /* function exit code */
 }
 
-/* "chulls.pyx":118
+/* "chulls.pyx":66
  * 
  * # Specializations for different array shapes
  * cdef void extract_hull_0d(double [:] spectrum, double [:] absorption,             # <<<<<<<<<<<<<<
@@ -3168,7 +2696,7 @@ static void __pyx_f_6chulls_extract_subhull(__Pyx_memviewslice __pyx_v_spectrum,
 static void __pyx_f_6chulls_extract_hull_0d(__Pyx_memviewslice __pyx_v_spectrum, __Pyx_memviewslice __pyx_v_absorption, __Pyx_memviewslice __pyx_v_wavelengths, int __pyx_v_hull_type) {
   int __pyx_v_nwvl;
 
-  /* "chulls.pyx":122
+  /* "chulls.pyx":70
  *     """ Extract hull for a single spectrum
  *     """
  *     cdef int nwvl = wavelengths.shape[0]-1             # <<<<<<<<<<<<<<
@@ -3177,7 +2705,7 @@ static void __pyx_f_6chulls_extract_hull_0d(__Pyx_memviewslice __pyx_v_spectrum,
  */
   __pyx_v_nwvl = ((__pyx_v_wavelengths.shape[0]) - 1);
 
-  /* "chulls.pyx":123
+  /* "chulls.pyx":71
  *     """
  *     cdef int nwvl = wavelengths.shape[0]-1
  *     extract_subhull(spectrum, absorption, wavelengths, 0, nwvl, hull_type)             # <<<<<<<<<<<<<<
@@ -3186,7 +2714,7 @@ static void __pyx_f_6chulls_extract_hull_0d(__Pyx_memviewslice __pyx_v_spectrum,
  */
   __pyx_f_6chulls_extract_subhull(__pyx_v_spectrum, __pyx_v_absorption, __pyx_v_wavelengths, 0, __pyx_v_nwvl, __pyx_v_hull_type);
 
-  /* "chulls.pyx":118
+  /* "chulls.pyx":66
  * 
  * # Specializations for different array shapes
  * cdef void extract_hull_0d(double [:] spectrum, double [:] absorption,             # <<<<<<<<<<<<<<
@@ -3197,7 +2725,7 @@ static void __pyx_f_6chulls_extract_hull_0d(__Pyx_memviewslice __pyx_v_spectrum,
   /* function exit code */
 }
 
-/* "chulls.pyx":126
+/* "chulls.pyx":74
  * 
  * @cython.boundscheck(False)
  * cdef void extract_hull_1d(double [:, :] spectrum, double [:, :] absorption,             # <<<<<<<<<<<<<<
@@ -3215,7 +2743,7 @@ static void __pyx_f_6chulls_extract_hull_1d(__Pyx_memviewslice __pyx_v_spectrum,
   __Pyx_memviewslice __pyx_t_4 = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_t_5 = { 0, 0, { 0 }, { 0 }, { 0 } };
 
-  /* "chulls.pyx":130
+  /* "chulls.pyx":78
  *     """ Extract hull for a 1D line of spectra
  *     """
  *     cdef int iidx, nx = spectrum.shape[0], nwvl = spectrum.shape[1]-1             # <<<<<<<<<<<<<<
@@ -3225,7 +2753,7 @@ static void __pyx_f_6chulls_extract_hull_1d(__Pyx_memviewslice __pyx_v_spectrum,
   __pyx_v_nx = (__pyx_v_spectrum.shape[0]);
   __pyx_v_nwvl = ((__pyx_v_spectrum.shape[1]) - 1);
 
-  /* "chulls.pyx":131
+  /* "chulls.pyx":79
  *     """
  *     cdef int iidx, nx = spectrum.shape[0], nwvl = spectrum.shape[1]-1
  *     with nogil, parallel(num_threads=NUM_THREADS):             # <<<<<<<<<<<<<<
@@ -3251,7 +2779,7 @@ static void __pyx_f_6chulls_extract_hull_1d(__Pyx_memviewslice __pyx_v_spectrum,
             #endif /* _OPENMP */
             {
 
-                /* "chulls.pyx":132
+                /* "chulls.pyx":80
  *     cdef int iidx, nx = spectrum.shape[0], nwvl = spectrum.shape[1]-1
  *     with nogil, parallel(num_threads=NUM_THREADS):
  *         for iidx in prange(nx, schedule='dynamic'):             # <<<<<<<<<<<<<<
@@ -3271,7 +2799,7 @@ static void __pyx_f_6chulls_extract_hull_1d(__Pyx_memviewslice __pyx_v_spectrum,
                             {
                                 __pyx_v_iidx = (int)(0 + 1 * __pyx_t_2);
 
-                                /* "chulls.pyx":133
+                                /* "chulls.pyx":81
  *     with nogil, parallel(num_threads=NUM_THREADS):
  *         for iidx in prange(nx, schedule='dynamic'):
  *             extract_subhull(spectrum[iidx], absorption[iidx], wavelengths, 0, nwvl, hull_type)             # <<<<<<<<<<<<<<
@@ -3331,7 +2859,7 @@ __pyx_f_6chulls_extract_subhull(__pyx_t_4, __pyx_t_5, __pyx_v_wavelengths, 0, __
         #endif
       }
 
-      /* "chulls.pyx":131
+      /* "chulls.pyx":79
  *     """
  *     cdef int iidx, nx = spectrum.shape[0], nwvl = spectrum.shape[1]-1
  *     with nogil, parallel(num_threads=NUM_THREADS):             # <<<<<<<<<<<<<<
@@ -3350,7 +2878,7 @@ __pyx_f_6chulls_extract_subhull(__pyx_t_4, __pyx_t_5, __pyx_v_wavelengths, 0, __
       }
   }
 
-  /* "chulls.pyx":126
+  /* "chulls.pyx":74
  * 
  * @cython.boundscheck(False)
  * cdef void extract_hull_1d(double [:, :] spectrum, double [:, :] absorption,             # <<<<<<<<<<<<<<
@@ -3361,7 +2889,7 @@ __pyx_f_6chulls_extract_subhull(__pyx_t_4, __pyx_t_5, __pyx_v_wavelengths, 0, __
   /* function exit code */
 }
 
-/* "chulls.pyx":136
+/* "chulls.pyx":84
  * 
  * @cython.boundscheck(False)
  * cdef void extract_hull_2d(double [:, :, :] spectrum, double[:, :, :] absorption,             # <<<<<<<<<<<<<<
@@ -3384,7 +2912,7 @@ static void __pyx_f_6chulls_extract_hull_2d(__Pyx_memviewslice __pyx_v_spectrum,
   __Pyx_memviewslice __pyx_t_7 = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_t_8 = { 0, 0, { 0 }, { 0 }, { 0 } };
 
-  /* "chulls.pyx":141
+  /* "chulls.pyx":89
  *     """
  *     cdef int iidx, jidx
  *     cdef int nx = spectrum.shape[0], ny = spectrum.shape[1], nwvl = spectrum.shape[2]-1             # <<<<<<<<<<<<<<
@@ -3395,7 +2923,7 @@ static void __pyx_f_6chulls_extract_hull_2d(__Pyx_memviewslice __pyx_v_spectrum,
   __pyx_v_ny = (__pyx_v_spectrum.shape[1]);
   __pyx_v_nwvl = ((__pyx_v_spectrum.shape[2]) - 1);
 
-  /* "chulls.pyx":142
+  /* "chulls.pyx":90
  *     cdef int iidx, jidx
  *     cdef int nx = spectrum.shape[0], ny = spectrum.shape[1], nwvl = spectrum.shape[2]-1
  *     with nogil, parallel(num_threads=NUM_THREADS):             # <<<<<<<<<<<<<<
@@ -3421,7 +2949,7 @@ static void __pyx_f_6chulls_extract_hull_2d(__Pyx_memviewslice __pyx_v_spectrum,
             #endif /* _OPENMP */
             {
 
-                /* "chulls.pyx":143
+                /* "chulls.pyx":91
  *     cdef int nx = spectrum.shape[0], ny = spectrum.shape[1], nwvl = spectrum.shape[2]-1
  *     with nogil, parallel(num_threads=NUM_THREADS):
  *         for iidx in prange(nx, schedule='dynamic'):             # <<<<<<<<<<<<<<
@@ -3443,7 +2971,7 @@ static void __pyx_f_6chulls_extract_hull_2d(__Pyx_memviewslice __pyx_v_spectrum,
                                 /* Initialize private variables to invalid values */
                                 __pyx_v_jidx = ((int)0xbad0bad0);
 
-                                /* "chulls.pyx":144
+                                /* "chulls.pyx":92
  *     with nogil, parallel(num_threads=NUM_THREADS):
  *         for iidx in prange(nx, schedule='dynamic'):
  *             for jidx in range(ny):             # <<<<<<<<<<<<<<
@@ -3455,7 +2983,7 @@ static void __pyx_f_6chulls_extract_hull_2d(__Pyx_memviewslice __pyx_v_spectrum,
                                 for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
                                   __pyx_v_jidx = __pyx_t_6;
 
-                                  /* "chulls.pyx":145
+                                  /* "chulls.pyx":93
  *         for iidx in prange(nx, schedule='dynamic'):
  *             for jidx in range(ny):
  *                 extract_subhull(spectrum[iidx, jidx], absorption[iidx, jidx], wavelengths, 0, nwvl, hull_type)             # <<<<<<<<<<<<<<
@@ -3534,7 +3062,7 @@ __pyx_f_6chulls_extract_subhull(__pyx_t_7, __pyx_t_8, __pyx_v_wavelengths, 0, __
         #endif
       }
 
-      /* "chulls.pyx":142
+      /* "chulls.pyx":90
  *     cdef int iidx, jidx
  *     cdef int nx = spectrum.shape[0], ny = spectrum.shape[1], nwvl = spectrum.shape[2]-1
  *     with nogil, parallel(num_threads=NUM_THREADS):             # <<<<<<<<<<<<<<
@@ -3553,7 +3081,7 @@ __pyx_f_6chulls_extract_subhull(__pyx_t_7, __pyx_t_8, __pyx_v_wavelengths, 0, __
       }
   }
 
-  /* "chulls.pyx":136
+  /* "chulls.pyx":84
  * 
  * @cython.boundscheck(False)
  * cdef void extract_hull_2d(double [:, :, :] spectrum, double[:, :, :] absorption,             # <<<<<<<<<<<<<<
@@ -3562,6 +3090,474 @@ __pyx_f_6chulls_extract_subhull(__pyx_t_7, __pyx_t_8, __pyx_v_wavelengths, 0, __
  */
 
   /* function exit code */
+}
+
+/* "chulls.pyx":96
+ * 
+ * 
+ * def get_absorption(wavelengths, spectra, hull_type):             # <<<<<<<<<<<<<<
+ *     """
+ *     Modified: Andrew Rodger, CSIRO Mineral Resources (15/02/2020)
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_6chulls_1get_absorption(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_6chulls_get_absorption[] = "get_absorption(wavelengths, spectra, hull_type)\n\n    Modified: Andrew Rodger, CSIRO Mineral Resources (15/02/2020)\n\n    Original author: Jess Robertson, CSIRO Mineral Resources\n\n    date: March 2016\n\n    (sk)Hulls for the skull god!\n\n    Apply a hull correction to incoming spectral data, or alternatively return the hull of the spectra\n\n    Args:\n        spectra (ndarray): the spectral data for processing. Can be a single spectrum, or N samples (NxB), or an image (NxMxB)\n        wavelengths (ndarray): the wavelengths corresponding to the spectral data\n        hull_type (int): 0 is hull quotient (1.0 - spectrum/hull), 1 is hull removed (hull - spectrum), and 2 is the actual sk(Hull)\n\n    Returns:\n        ndarray: an array (the same shape as spectral data array) of hull corrected spectra\n\n    ";
+static PyMethodDef __pyx_mdef_6chulls_1get_absorption = {"get_absorption", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6chulls_1get_absorption, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6chulls_get_absorption};
+static PyObject *__pyx_pw_6chulls_1get_absorption(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_wavelengths = 0;
+  PyObject *__pyx_v_spectra = 0;
+  PyObject *__pyx_v_hull_type = 0;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("get_absorption (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_wavelengths,&__pyx_n_s_spectra,&__pyx_n_s_hull_type,0};
+    PyObject* values[3] = {0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_wavelengths)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_spectra)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("get_absorption", 1, 3, 3, 1); __PYX_ERR(0, 96, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_hull_type)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("get_absorption", 1, 3, 3, 2); __PYX_ERR(0, 96, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_absorption") < 0)) __PYX_ERR(0, 96, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+    }
+    __pyx_v_wavelengths = values[0];
+    __pyx_v_spectra = values[1];
+    __pyx_v_hull_type = values[2];
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("get_absorption", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 96, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("chulls.get_absorption", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_6chulls_get_absorption(__pyx_self, __pyx_v_wavelengths, __pyx_v_spectra, __pyx_v_hull_type);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_6chulls_get_absorption(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_wavelengths, PyObject *__pyx_v_spectra, PyObject *__pyx_v_hull_type) {
+  PyObject *__pyx_v_absorption = NULL;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  int __pyx_t_4;
+  __Pyx_memviewslice __pyx_t_5 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_6 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_7 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  int __pyx_t_8;
+  __Pyx_memviewslice __pyx_t_9 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_10 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_11 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_12 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("get_absorption", 0);
+  __Pyx_INCREF(__pyx_v_wavelengths);
+  __Pyx_INCREF(__pyx_v_spectra);
+  __Pyx_INCREF(__pyx_v_hull_type);
+
+  /* "chulls.pyx":118
+ *     """
+ *     # make the arrays doubles
+ *     spectra = double(spectra)             # <<<<<<<<<<<<<<
+ *     wavelengths = double(wavelengths)
+ * 
+ */
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_double); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_spectra) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_spectra);
+  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF_SET(__pyx_v_spectra, __pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "chulls.pyx":119
+ *     # make the arrays doubles
+ *     spectra = double(spectra)
+ *     wavelengths = double(wavelengths)             # <<<<<<<<<<<<<<
+ * 
+ *     # Allocate some memory for absorptions
+ */
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_double); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 119, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_wavelengths) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_wavelengths);
+  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 119, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF_SET(__pyx_v_wavelengths, __pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "chulls.pyx":122
+ * 
+ *     # Allocate some memory for absorptions
+ *     absorption = empty(shape=spectra.shape)             # <<<<<<<<<<<<<<
+ * 
+ *     # see if its the hull quotient or hull removed
+ */
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 122, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 122, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_spectra, __pyx_n_s_shape); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 122, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_shape, __pyx_t_3) < 0) __PYX_ERR(0, 122, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 122, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_v_absorption = __pyx_t_3;
+  __pyx_t_3 = 0;
+
+  /* "chulls.pyx":125
+ * 
+ *     # see if its the hull quotient or hull removed
+ *     if hull_type == 0:             # <<<<<<<<<<<<<<
+ *         hull_type = 0
+ *     elif hull_type == 1:
+ */
+  __pyx_t_3 = __Pyx_PyInt_EqObjC(__pyx_v_hull_type, __pyx_int_0, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (__pyx_t_4) {
+
+    /* "chulls.pyx":126
+ *     # see if its the hull quotient or hull removed
+ *     if hull_type == 0:
+ *         hull_type = 0             # <<<<<<<<<<<<<<
+ *     elif hull_type == 1:
+ *         hull_type = 1
+ */
+    __Pyx_INCREF(__pyx_int_0);
+    __Pyx_DECREF_SET(__pyx_v_hull_type, __pyx_int_0);
+
+    /* "chulls.pyx":125
+ * 
+ *     # see if its the hull quotient or hull removed
+ *     if hull_type == 0:             # <<<<<<<<<<<<<<
+ *         hull_type = 0
+ *     elif hull_type == 1:
+ */
+    goto __pyx_L3;
+  }
+
+  /* "chulls.pyx":127
+ *     if hull_type == 0:
+ *         hull_type = 0
+ *     elif hull_type == 1:             # <<<<<<<<<<<<<<
+ *         hull_type = 1
+ *     else:
+ */
+  __pyx_t_3 = __Pyx_PyInt_EqObjC(__pyx_v_hull_type, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 127, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 127, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (__pyx_t_4) {
+
+    /* "chulls.pyx":128
+ *         hull_type = 0
+ *     elif hull_type == 1:
+ *         hull_type = 1             # <<<<<<<<<<<<<<
+ *     else:
+ *         hull_type = 2
+ */
+    __Pyx_INCREF(__pyx_int_1);
+    __Pyx_DECREF_SET(__pyx_v_hull_type, __pyx_int_1);
+
+    /* "chulls.pyx":127
+ *     if hull_type == 0:
+ *         hull_type = 0
+ *     elif hull_type == 1:             # <<<<<<<<<<<<<<
+ *         hull_type = 1
+ *     else:
+ */
+    goto __pyx_L3;
+  }
+
+  /* "chulls.pyx":130
+ *         hull_type = 1
+ *     else:
+ *         hull_type = 2             # <<<<<<<<<<<<<<
+ * 
+ *     # Do lookup for dimension-specific call
+ */
+  /*else*/ {
+    __Pyx_INCREF(__pyx_int_2);
+    __Pyx_DECREF_SET(__pyx_v_hull_type, __pyx_int_2);
+  }
+  __pyx_L3:;
+
+  /* "chulls.pyx":133
+ * 
+ *     # Do lookup for dimension-specific call
+ *     if (spectra.ndim == 1):             # <<<<<<<<<<<<<<
+ *         extract_hull_0d(spectra, absorption, wavelengths, hull_type)
+ * 
+ */
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_spectra, __pyx_n_s_ndim); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 133, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_2 = __Pyx_PyInt_EqObjC(__pyx_t_3, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 133, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 133, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (__pyx_t_4) {
+
+    /* "chulls.pyx":134
+ *     # Do lookup for dimension-specific call
+ *     if (spectra.ndim == 1):
+ *         extract_hull_0d(spectra, absorption, wavelengths, hull_type)             # <<<<<<<<<<<<<<
+ * 
+ *     elif (spectra.ndim == 2):
+ */
+    __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_v_spectra, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 134, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_v_absorption, PyBUF_WRITABLE); if (unlikely(!__pyx_t_6.memview)) __PYX_ERR(0, 134, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_v_wavelengths, PyBUF_WRITABLE); if (unlikely(!__pyx_t_7.memview)) __PYX_ERR(0, 134, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_v_hull_type); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 134, __pyx_L1_error)
+    __pyx_f_6chulls_extract_hull_0d(__pyx_t_5, __pyx_t_6, __pyx_t_7, __pyx_t_8);
+    __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
+    __pyx_t_5.memview = NULL;
+    __pyx_t_5.data = NULL;
+    __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
+    __pyx_t_6.memview = NULL;
+    __pyx_t_6.data = NULL;
+    __PYX_XDEC_MEMVIEW(&__pyx_t_7, 1);
+    __pyx_t_7.memview = NULL;
+    __pyx_t_7.data = NULL;
+
+    /* "chulls.pyx":133
+ * 
+ *     # Do lookup for dimension-specific call
+ *     if (spectra.ndim == 1):             # <<<<<<<<<<<<<<
+ *         extract_hull_0d(spectra, absorption, wavelengths, hull_type)
+ * 
+ */
+    goto __pyx_L4;
+  }
+
+  /* "chulls.pyx":136
+ *         extract_hull_0d(spectra, absorption, wavelengths, hull_type)
+ * 
+ *     elif (spectra.ndim == 2):             # <<<<<<<<<<<<<<
+ *         extract_hull_1d(spectra, absorption, wavelengths, hull_type)
+ * 
+ */
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_spectra, __pyx_n_s_ndim); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 136, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyInt_EqObjC(__pyx_t_2, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 136, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 136, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (__pyx_t_4) {
+
+    /* "chulls.pyx":137
+ * 
+ *     elif (spectra.ndim == 2):
+ *         extract_hull_1d(spectra, absorption, wavelengths, hull_type)             # <<<<<<<<<<<<<<
+ * 
+ *     elif (spectra.ndim == 3):
+ */
+    __pyx_t_9 = __Pyx_PyObject_to_MemoryviewSlice_dsds_double(__pyx_v_spectra, PyBUF_WRITABLE); if (unlikely(!__pyx_t_9.memview)) __PYX_ERR(0, 137, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyObject_to_MemoryviewSlice_dsds_double(__pyx_v_absorption, PyBUF_WRITABLE); if (unlikely(!__pyx_t_10.memview)) __PYX_ERR(0, 137, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_v_wavelengths, PyBUF_WRITABLE); if (unlikely(!__pyx_t_7.memview)) __PYX_ERR(0, 137, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_v_hull_type); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 137, __pyx_L1_error)
+    __pyx_f_6chulls_extract_hull_1d(__pyx_t_9, __pyx_t_10, __pyx_t_7, __pyx_t_8);
+    __PYX_XDEC_MEMVIEW(&__pyx_t_9, 1);
+    __pyx_t_9.memview = NULL;
+    __pyx_t_9.data = NULL;
+    __PYX_XDEC_MEMVIEW(&__pyx_t_10, 1);
+    __pyx_t_10.memview = NULL;
+    __pyx_t_10.data = NULL;
+    __PYX_XDEC_MEMVIEW(&__pyx_t_7, 1);
+    __pyx_t_7.memview = NULL;
+    __pyx_t_7.data = NULL;
+
+    /* "chulls.pyx":136
+ *         extract_hull_0d(spectra, absorption, wavelengths, hull_type)
+ * 
+ *     elif (spectra.ndim == 2):             # <<<<<<<<<<<<<<
+ *         extract_hull_1d(spectra, absorption, wavelengths, hull_type)
+ * 
+ */
+    goto __pyx_L4;
+  }
+
+  /* "chulls.pyx":139
+ *         extract_hull_1d(spectra, absorption, wavelengths, hull_type)
+ * 
+ *     elif (spectra.ndim == 3):             # <<<<<<<<<<<<<<
+ *         extract_hull_2d(spectra, absorption, wavelengths, hull_type)
+ *     else:
+ */
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_spectra, __pyx_n_s_ndim); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 139, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_2 = __Pyx_PyInt_EqObjC(__pyx_t_3, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 139, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 139, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (likely(__pyx_t_4)) {
+
+    /* "chulls.pyx":140
+ * 
+ *     elif (spectra.ndim == 3):
+ *         extract_hull_2d(spectra, absorption, wavelengths, hull_type)             # <<<<<<<<<<<<<<
+ *     else:
+ *         raise NotImplementedError(
+ */
+    __pyx_t_11 = __Pyx_PyObject_to_MemoryviewSlice_dsdsds_double(__pyx_v_spectra, PyBUF_WRITABLE); if (unlikely(!__pyx_t_11.memview)) __PYX_ERR(0, 140, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyObject_to_MemoryviewSlice_dsdsds_double(__pyx_v_absorption, PyBUF_WRITABLE); if (unlikely(!__pyx_t_12.memview)) __PYX_ERR(0, 140, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_v_wavelengths, PyBUF_WRITABLE); if (unlikely(!__pyx_t_7.memview)) __PYX_ERR(0, 140, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_As_int(__pyx_v_hull_type); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 140, __pyx_L1_error)
+    __pyx_f_6chulls_extract_hull_2d(__pyx_t_11, __pyx_t_12, __pyx_t_7, __pyx_t_8);
+    __PYX_XDEC_MEMVIEW(&__pyx_t_11, 1);
+    __pyx_t_11.memview = NULL;
+    __pyx_t_11.data = NULL;
+    __PYX_XDEC_MEMVIEW(&__pyx_t_12, 1);
+    __pyx_t_12.memview = NULL;
+    __pyx_t_12.data = NULL;
+    __PYX_XDEC_MEMVIEW(&__pyx_t_7, 1);
+    __pyx_t_7.memview = NULL;
+    __pyx_t_7.data = NULL;
+
+    /* "chulls.pyx":139
+ *         extract_hull_1d(spectra, absorption, wavelengths, hull_type)
+ * 
+ *     elif (spectra.ndim == 3):             # <<<<<<<<<<<<<<
+ *         extract_hull_2d(spectra, absorption, wavelengths, hull_type)
+ *     else:
+ */
+    goto __pyx_L4;
+  }
+
+  /* "chulls.pyx":142
+ *         extract_hull_2d(spectra, absorption, wavelengths, hull_type)
+ *     else:
+ *         raise NotImplementedError(             # <<<<<<<<<<<<<<
+ *             'Extraction not available for raster dimension >= 3')
+ *     return absorption
+ */
+  /*else*/ {
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_NotImplementedError, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 142, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_Raise(__pyx_t_2, 0, 0, 0);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __PYX_ERR(0, 142, __pyx_L1_error)
+  }
+  __pyx_L4:;
+
+  /* "chulls.pyx":144
+ *         raise NotImplementedError(
+ *             'Extraction not available for raster dimension >= 3')
+ *     return absorption             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_absorption);
+  __pyx_r = __pyx_v_absorption;
+  goto __pyx_L0;
+
+  /* "chulls.pyx":96
+ * 
+ * 
+ * def get_absorption(wavelengths, spectra, hull_type):             # <<<<<<<<<<<<<<
+ *     """
+ *     Modified: Andrew Rodger, CSIRO Mineral Resources (15/02/2020)
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_7, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_9, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_10, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_11, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_12, 1);
+  __Pyx_AddTraceback("chulls.get_absorption", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_absorption);
+  __Pyx_XDECREF(__pyx_v_wavelengths);
+  __Pyx_XDECREF(__pyx_v_spectra);
+  __Pyx_XDECREF(__pyx_v_hull_type);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
 }
 
 /* "View.MemoryView":123
@@ -17395,7 +17391,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_MemoryError, __pyx_k_MemoryError, sizeof(__pyx_k_MemoryError), 0, 0, 1, 1},
   {&__pyx_kp_s_MemoryView_of_r_at_0x_x, __pyx_k_MemoryView_of_r_at_0x_x, sizeof(__pyx_k_MemoryView_of_r_at_0x_x), 0, 0, 1, 0},
   {&__pyx_kp_s_MemoryView_of_r_object, __pyx_k_MemoryView_of_r_object, sizeof(__pyx_k_MemoryView_of_r_object), 0, 0, 1, 0},
-  {&__pyx_n_s_NDArray, __pyx_k_NDArray, sizeof(__pyx_k_NDArray), 0, 0, 1, 1},
   {&__pyx_n_s_NotImplementedError, __pyx_k_NotImplementedError, sizeof(__pyx_k_NotImplementedError), 0, 0, 1, 1},
   {&__pyx_n_b_O, __pyx_k_O, sizeof(__pyx_k_O), 0, 0, 0, 1},
   {&__pyx_kp_s_Out_of_bounds_on_buffer_access_a, __pyx_k_Out_of_bounds_on_buffer_access_a, sizeof(__pyx_k_Out_of_bounds_on_buffer_access_a), 0, 0, 1, 0},
@@ -17445,7 +17440,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_new, __pyx_k_new, sizeof(__pyx_k_new), 0, 0, 1, 1},
   {&__pyx_kp_s_no_default___reduce___due_to_non, __pyx_k_no_default___reduce___due_to_non, sizeof(__pyx_k_no_default___reduce___due_to_non), 0, 0, 1, 0},
   {&__pyx_n_s_numpy, __pyx_k_numpy, sizeof(__pyx_k_numpy), 0, 0, 1, 1},
-  {&__pyx_n_s_numpy_typing, __pyx_k_numpy_typing, sizeof(__pyx_k_numpy_typing), 0, 0, 1, 1},
   {&__pyx_n_s_obj, __pyx_k_obj, sizeof(__pyx_k_obj), 0, 0, 1, 1},
   {&__pyx_n_s_pack, __pyx_k_pack, sizeof(__pyx_k_pack), 0, 0, 1, 1},
   {&__pyx_n_s_pickle, __pyx_k_pickle, sizeof(__pyx_k_pickle), 0, 0, 1, 1},
@@ -17483,8 +17477,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_NotImplementedError = __Pyx_GetBuiltinName(__pyx_n_s_NotImplementedError); if (!__pyx_builtin_NotImplementedError) __PYX_ERR(0, 55, __pyx_L1_error)
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 79, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_builtin_NotImplementedError = __Pyx_GetBuiltinName(__pyx_n_s_NotImplementedError); if (!__pyx_builtin_NotImplementedError) __PYX_ERR(0, 142, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(1, 134, __pyx_L1_error)
   __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(1, 149, __pyx_L1_error)
   __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(1, 152, __pyx_L1_error)
@@ -17501,14 +17495,14 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "chulls.pyx":55
+  /* "chulls.pyx":142
  *         extract_hull_2d(spectra, absorption, wavelengths, hull_type)
  *     else:
  *         raise NotImplementedError(             # <<<<<<<<<<<<<<
  *             'Extraction not available for raster dimension >= 3')
  *     return absorption
  */
-  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_u_Extraction_not_available_for_ras); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 55, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_u_Extraction_not_available_for_ras); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 142, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
 
@@ -17707,17 +17701,17 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__20);
   __Pyx_GIVEREF(__pyx_tuple__20);
 
-  /* "chulls.pyx":9
- * cdef int NUM_THREADS = cpu_count()
+  /* "chulls.pyx":96
+ * 
  * 
  * def get_absorption(wavelengths, spectra, hull_type):             # <<<<<<<<<<<<<<
  *     """
  *     Modified: Andrew Rodger, CSIRO Mineral Resources (15/02/2020)
  */
-  __pyx_tuple__21 = PyTuple_Pack(4, __pyx_n_s_wavelengths, __pyx_n_s_spectra, __pyx_n_s_hull_type, __pyx_n_s_absorption); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 9, __pyx_L1_error)
+  __pyx_tuple__21 = PyTuple_Pack(4, __pyx_n_s_wavelengths, __pyx_n_s_spectra, __pyx_n_s_hull_type, __pyx_n_s_absorption); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__21);
   __Pyx_GIVEREF(__pyx_tuple__21);
-  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(3, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_chulls_pyx, __pyx_n_s_get_absorption, 9, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 9, __pyx_L1_error)
+  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(3, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_chulls_pyx, __pyx_n_s_get_absorption, 96, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 96, __pyx_L1_error)
 
   /* "View.MemoryView":287
  *         return self.name
@@ -18145,8 +18139,8 @@ if (!__Pyx_RefNanny) {
  * import cython
  * from cython.parallel import prange, parallel
  * from numpy import empty, double             # <<<<<<<<<<<<<<
- * from numpy.typing import NDArray
- * #from common cimport NUM_THREADS
+ * from multiprocessing import cpu_count
+ * cdef int NUM_THREADS = cpu_count()
  */
   __pyx_t_1 = PyList_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -18172,82 +18166,61 @@ if (!__Pyx_RefNanny) {
   /* "chulls.pyx":4
  * from cython.parallel import prange, parallel
  * from numpy import empty, double
- * from numpy.typing import NDArray             # <<<<<<<<<<<<<<
- * #from common cimport NUM_THREADS
- * from multiprocessing import cpu_count
- */
-  __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 4, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_INCREF(__pyx_n_s_NDArray);
-  __Pyx_GIVEREF(__pyx_n_s_NDArray);
-  PyList_SET_ITEM(__pyx_t_2, 0, __pyx_n_s_NDArray);
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_numpy_typing, __pyx_t_2, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 4, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_1, __pyx_n_s_NDArray); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 4, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_NDArray, __pyx_t_2) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-  /* "chulls.pyx":6
- * from numpy.typing import NDArray
- * #from common cimport NUM_THREADS
  * from multiprocessing import cpu_count             # <<<<<<<<<<<<<<
  * cdef int NUM_THREADS = cpu_count()
  * 
  */
-  __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 6, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 4, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(__pyx_n_s_cpu_count);
   __Pyx_GIVEREF(__pyx_n_s_cpu_count);
-  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_cpu_count);
-  __pyx_t_2 = __Pyx_Import(__pyx_n_s_multiprocessing, __pyx_t_1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 6, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_cpu_count); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 6, __pyx_L1_error)
+  PyList_SET_ITEM(__pyx_t_2, 0, __pyx_n_s_cpu_count);
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_multiprocessing, __pyx_t_2, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_cpu_count, __pyx_t_1) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_1, __pyx_n_s_cpu_count); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 4, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_cpu_count, __pyx_t_2) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "chulls.pyx":7
- * #from common cimport NUM_THREADS
+  /* "chulls.pyx":5
+ * from numpy import empty, double
  * from multiprocessing import cpu_count
  * cdef int NUM_THREADS = cpu_count()             # <<<<<<<<<<<<<<
  * 
- * def get_absorption(wavelengths, spectra, hull_type):
+ * # CYTHON CODE
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_cpu_count); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 7, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 7, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_cpu_count); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 7, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 5, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 5, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_6chulls_NUM_THREADS = __pyx_t_3;
 
-  /* "chulls.pyx":9
- * cdef int NUM_THREADS = cpu_count()
+  /* "chulls.pyx":96
+ * 
  * 
  * def get_absorption(wavelengths, spectra, hull_type):             # <<<<<<<<<<<<<<
  *     """
  *     Modified: Andrew Rodger, CSIRO Mineral Resources (15/02/2020)
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6chulls_1get_absorption, NULL, __pyx_n_s_chulls); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 9, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_get_absorption, __pyx_t_1) < 0) __PYX_ERR(0, 9, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6chulls_1get_absorption, NULL, __pyx_n_s_chulls); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_get_absorption, __pyx_t_2) < 0) __PYX_ERR(0, 96, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "chulls.pyx":1
  * import cython             # <<<<<<<<<<<<<<
  * from cython.parallel import prange, parallel
  * from numpy import empty, double
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test, __pyx_t_1) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test, __pyx_t_2) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "View.MemoryView":210
  *         info.obj = self
@@ -18256,10 +18229,10 @@ if (!__Pyx_RefNanny) {
  * 
  *     def __dealloc__(array self):
  */
-  __pyx_t_1 = __pyx_capsule_create(((void *)(&__pyx_array_getbuffer)), ((char *)"getbuffer(obj, view, flags)")); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 210, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem((PyObject *)__pyx_array_type->tp_dict, __pyx_n_s_pyx_getbuffer, __pyx_t_1) < 0) __PYX_ERR(1, 210, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_2 = __pyx_capsule_create(((void *)(&__pyx_array_getbuffer)), ((char *)"getbuffer(obj, view, flags)")); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 210, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem((PyObject *)__pyx_array_type->tp_dict, __pyx_n_s_pyx_getbuffer, __pyx_t_2) < 0) __PYX_ERR(1, 210, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_array_type);
 
   /* "View.MemoryView":287
@@ -18269,12 +18242,12 @@ if (!__Pyx_RefNanny) {
  * cdef strided = Enum("<strided and direct>") # default
  * cdef indirect = Enum("<strided and indirect>")
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__23, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 287, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__23, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 287, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XGOTREF(generic);
-  __Pyx_DECREF_SET(generic, __pyx_t_1);
-  __Pyx_GIVEREF(__pyx_t_1);
-  __pyx_t_1 = 0;
+  __Pyx_DECREF_SET(generic, __pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_2);
+  __pyx_t_2 = 0;
 
   /* "View.MemoryView":288
  * 
@@ -18283,12 +18256,12 @@ if (!__Pyx_RefNanny) {
  * cdef indirect = Enum("<strided and indirect>")
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__24, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 288, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__24, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 288, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XGOTREF(strided);
-  __Pyx_DECREF_SET(strided, __pyx_t_1);
-  __Pyx_GIVEREF(__pyx_t_1);
-  __pyx_t_1 = 0;
+  __Pyx_DECREF_SET(strided, __pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_2);
+  __pyx_t_2 = 0;
 
   /* "View.MemoryView":289
  * cdef generic = Enum("<strided and direct or indirect>")
@@ -18297,12 +18270,12 @@ if (!__Pyx_RefNanny) {
  * 
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__25, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 289, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__25, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 289, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XGOTREF(indirect);
-  __Pyx_DECREF_SET(indirect, __pyx_t_1);
-  __Pyx_GIVEREF(__pyx_t_1);
-  __pyx_t_1 = 0;
+  __Pyx_DECREF_SET(indirect, __pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_2);
+  __pyx_t_2 = 0;
 
   /* "View.MemoryView":292
  * 
@@ -18311,12 +18284,12 @@ if (!__Pyx_RefNanny) {
  * cdef indirect_contiguous = Enum("<contiguous and indirect>")
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__26, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 292, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__26, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 292, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XGOTREF(contiguous);
-  __Pyx_DECREF_SET(contiguous, __pyx_t_1);
-  __Pyx_GIVEREF(__pyx_t_1);
-  __pyx_t_1 = 0;
+  __Pyx_DECREF_SET(contiguous, __pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_2);
+  __pyx_t_2 = 0;
 
   /* "View.MemoryView":293
  * 
@@ -18325,12 +18298,12 @@ if (!__Pyx_RefNanny) {
  * 
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__27, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 293, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__27, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 293, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XGOTREF(indirect_contiguous);
-  __Pyx_DECREF_SET(indirect_contiguous, __pyx_t_1);
-  __Pyx_GIVEREF(__pyx_t_1);
-  __pyx_t_1 = 0;
+  __Pyx_DECREF_SET(indirect_contiguous, __pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_2);
+  __pyx_t_2 = 0;
 
   /* "View.MemoryView":317
  * 
@@ -18365,10 +18338,10 @@ if (!__Pyx_RefNanny) {
  * 
  * 
  */
-  __pyx_t_1 = __pyx_capsule_create(((void *)(&__pyx_memoryview_getbuffer)), ((char *)"getbuffer(obj, view, flags)")); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 551, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem((PyObject *)__pyx_memoryview_type->tp_dict, __pyx_n_s_pyx_getbuffer, __pyx_t_1) < 0) __PYX_ERR(1, 551, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_2 = __pyx_capsule_create(((void *)(&__pyx_memoryview_getbuffer)), ((char *)"getbuffer(obj, view, flags)")); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 551, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem((PyObject *)__pyx_memoryview_type->tp_dict, __pyx_n_s_pyx_getbuffer, __pyx_t_2) < 0) __PYX_ERR(1, 551, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_memoryview_type);
 
   /* "View.MemoryView":997
@@ -18378,10 +18351,10 @@ if (!__Pyx_RefNanny) {
  * 
  * 
  */
-  __pyx_t_1 = __pyx_capsule_create(((void *)(&__pyx_memoryview_getbuffer)), ((char *)"getbuffer(obj, view, flags)")); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 997, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem((PyObject *)__pyx_memoryviewslice_type->tp_dict, __pyx_n_s_pyx_getbuffer, __pyx_t_1) < 0) __PYX_ERR(1, 997, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_2 = __pyx_capsule_create(((void *)(&__pyx_memoryview_getbuffer)), ((char *)"getbuffer(obj, view, flags)")); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 997, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem((PyObject *)__pyx_memoryviewslice_type->tp_dict, __pyx_n_s_pyx_getbuffer, __pyx_t_2) < 0) __PYX_ERR(1, 997, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_memoryviewslice_type);
 
   /* "(tree fragment)":1
@@ -18389,10 +18362,10 @@ if (!__Pyx_RefNanny) {
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_15View_dot_MemoryView_1__pyx_unpickle_Enum, NULL, __pyx_n_s_View_MemoryView); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 1, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_pyx_unpickle_Enum, __pyx_t_1) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_15View_dot_MemoryView_1__pyx_unpickle_Enum, NULL, __pyx_n_s_View_MemoryView); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_pyx_unpickle_Enum, __pyx_t_2) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "(tree fragment)":11
  *         __pyx_unpickle_Enum__set_state(<Enum> __pyx_result, __pyx_state)
@@ -18471,6 +18444,138 @@ static PyObject *__Pyx_GetBuiltinName(PyObject *name) {
 #endif
     }
     return result;
+}
+
+/* MemviewSliceInit */
+static int
+__Pyx_init_memviewslice(struct __pyx_memoryview_obj *memview,
+                        int ndim,
+                        __Pyx_memviewslice *memviewslice,
+                        int memview_is_new_reference)
+{
+    __Pyx_RefNannyDeclarations
+    int i, retval=-1;
+    Py_buffer *buf = &memview->view;
+    __Pyx_RefNannySetupContext("init_memviewslice", 0);
+    if (unlikely(memviewslice->memview || memviewslice->data)) {
+        PyErr_SetString(PyExc_ValueError,
+            "memviewslice is already initialized!");
+        goto fail;
+    }
+    if (buf->strides) {
+        for (i = 0; i < ndim; i++) {
+            memviewslice->strides[i] = buf->strides[i];
+        }
+    } else {
+        Py_ssize_t stride = buf->itemsize;
+        for (i = ndim - 1; i >= 0; i--) {
+            memviewslice->strides[i] = stride;
+            stride *= buf->shape[i];
+        }
+    }
+    for (i = 0; i < ndim; i++) {
+        memviewslice->shape[i]   = buf->shape[i];
+        if (buf->suboffsets) {
+            memviewslice->suboffsets[i] = buf->suboffsets[i];
+        } else {
+            memviewslice->suboffsets[i] = -1;
+        }
+    }
+    memviewslice->memview = memview;
+    memviewslice->data = (char *)buf->buf;
+    if (__pyx_add_acquisition_count(memview) == 0 && !memview_is_new_reference) {
+        Py_INCREF(memview);
+    }
+    retval = 0;
+    goto no_fail;
+fail:
+    memviewslice->memview = 0;
+    memviewslice->data = 0;
+    retval = -1;
+no_fail:
+    __Pyx_RefNannyFinishContext();
+    return retval;
+}
+#ifndef Py_NO_RETURN
+#define Py_NO_RETURN
+#endif
+static void __pyx_fatalerror(const char *fmt, ...) Py_NO_RETURN {
+    va_list vargs;
+    char msg[200];
+#if PY_VERSION_HEX >= 0x030A0000 || defined(HAVE_STDARG_PROTOTYPES)
+    va_start(vargs, fmt);
+#else
+    va_start(vargs);
+#endif
+    vsnprintf(msg, 200, fmt, vargs);
+    va_end(vargs);
+    Py_FatalError(msg);
+}
+static CYTHON_INLINE int
+__pyx_add_acquisition_count_locked(__pyx_atomic_int *acquisition_count,
+                                   PyThread_type_lock lock)
+{
+    int result;
+    PyThread_acquire_lock(lock, 1);
+    result = (*acquisition_count)++;
+    PyThread_release_lock(lock);
+    return result;
+}
+static CYTHON_INLINE int
+__pyx_sub_acquisition_count_locked(__pyx_atomic_int *acquisition_count,
+                                   PyThread_type_lock lock)
+{
+    int result;
+    PyThread_acquire_lock(lock, 1);
+    result = (*acquisition_count)--;
+    PyThread_release_lock(lock);
+    return result;
+}
+static CYTHON_INLINE void
+__Pyx_INC_MEMVIEW(__Pyx_memviewslice *memslice, int have_gil, int lineno)
+{
+    int first_time;
+    struct __pyx_memoryview_obj *memview = memslice->memview;
+    if (unlikely(!memview || (PyObject *) memview == Py_None))
+        return;
+    if (unlikely(__pyx_get_slice_count(memview) < 0))
+        __pyx_fatalerror("Acquisition count is %d (line %d)",
+                         __pyx_get_slice_count(memview), lineno);
+    first_time = __pyx_add_acquisition_count(memview) == 0;
+    if (unlikely(first_time)) {
+        if (have_gil) {
+            Py_INCREF((PyObject *) memview);
+        } else {
+            PyGILState_STATE _gilstate = PyGILState_Ensure();
+            Py_INCREF((PyObject *) memview);
+            PyGILState_Release(_gilstate);
+        }
+    }
+}
+static CYTHON_INLINE void __Pyx_XDEC_MEMVIEW(__Pyx_memviewslice *memslice,
+                                             int have_gil, int lineno) {
+    int last_time;
+    struct __pyx_memoryview_obj *memview = memslice->memview;
+    if (unlikely(!memview || (PyObject *) memview == Py_None)) {
+        memslice->memview = NULL;
+        return;
+    }
+    if (unlikely(__pyx_get_slice_count(memview) <= 0))
+        __pyx_fatalerror("Acquisition count is %d (line %d)",
+                         __pyx_get_slice_count(memview), lineno);
+    last_time = __pyx_sub_acquisition_count(memview) == 1;
+    memslice->data = NULL;
+    if (unlikely(last_time)) {
+        if (have_gil) {
+            Py_CLEAR(memslice->memview);
+        } else {
+            PyGILState_STATE _gilstate = PyGILState_Ensure();
+            Py_CLEAR(memslice->memview);
+            PyGILState_Release(_gilstate);
+        }
+    } else {
+        memslice->memview = NULL;
+    }
 }
 
 /* RaiseArgTupleInvalid */
@@ -18992,138 +19097,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyInt_EqObjC(PyObject *op1, PyObject *op2, 
     }
     return (
         PyObject_RichCompare(op1, op2, Py_EQ));
-}
-
-/* MemviewSliceInit */
-static int
-__Pyx_init_memviewslice(struct __pyx_memoryview_obj *memview,
-                        int ndim,
-                        __Pyx_memviewslice *memviewslice,
-                        int memview_is_new_reference)
-{
-    __Pyx_RefNannyDeclarations
-    int i, retval=-1;
-    Py_buffer *buf = &memview->view;
-    __Pyx_RefNannySetupContext("init_memviewslice", 0);
-    if (unlikely(memviewslice->memview || memviewslice->data)) {
-        PyErr_SetString(PyExc_ValueError,
-            "memviewslice is already initialized!");
-        goto fail;
-    }
-    if (buf->strides) {
-        for (i = 0; i < ndim; i++) {
-            memviewslice->strides[i] = buf->strides[i];
-        }
-    } else {
-        Py_ssize_t stride = buf->itemsize;
-        for (i = ndim - 1; i >= 0; i--) {
-            memviewslice->strides[i] = stride;
-            stride *= buf->shape[i];
-        }
-    }
-    for (i = 0; i < ndim; i++) {
-        memviewslice->shape[i]   = buf->shape[i];
-        if (buf->suboffsets) {
-            memviewslice->suboffsets[i] = buf->suboffsets[i];
-        } else {
-            memviewslice->suboffsets[i] = -1;
-        }
-    }
-    memviewslice->memview = memview;
-    memviewslice->data = (char *)buf->buf;
-    if (__pyx_add_acquisition_count(memview) == 0 && !memview_is_new_reference) {
-        Py_INCREF(memview);
-    }
-    retval = 0;
-    goto no_fail;
-fail:
-    memviewslice->memview = 0;
-    memviewslice->data = 0;
-    retval = -1;
-no_fail:
-    __Pyx_RefNannyFinishContext();
-    return retval;
-}
-#ifndef Py_NO_RETURN
-#define Py_NO_RETURN
-#endif
-static void __pyx_fatalerror(const char *fmt, ...) Py_NO_RETURN {
-    va_list vargs;
-    char msg[200];
-#if PY_VERSION_HEX >= 0x030A0000 || defined(HAVE_STDARG_PROTOTYPES)
-    va_start(vargs, fmt);
-#else
-    va_start(vargs);
-#endif
-    vsnprintf(msg, 200, fmt, vargs);
-    va_end(vargs);
-    Py_FatalError(msg);
-}
-static CYTHON_INLINE int
-__pyx_add_acquisition_count_locked(__pyx_atomic_int *acquisition_count,
-                                   PyThread_type_lock lock)
-{
-    int result;
-    PyThread_acquire_lock(lock, 1);
-    result = (*acquisition_count)++;
-    PyThread_release_lock(lock);
-    return result;
-}
-static CYTHON_INLINE int
-__pyx_sub_acquisition_count_locked(__pyx_atomic_int *acquisition_count,
-                                   PyThread_type_lock lock)
-{
-    int result;
-    PyThread_acquire_lock(lock, 1);
-    result = (*acquisition_count)--;
-    PyThread_release_lock(lock);
-    return result;
-}
-static CYTHON_INLINE void
-__Pyx_INC_MEMVIEW(__Pyx_memviewslice *memslice, int have_gil, int lineno)
-{
-    int first_time;
-    struct __pyx_memoryview_obj *memview = memslice->memview;
-    if (unlikely(!memview || (PyObject *) memview == Py_None))
-        return;
-    if (unlikely(__pyx_get_slice_count(memview) < 0))
-        __pyx_fatalerror("Acquisition count is %d (line %d)",
-                         __pyx_get_slice_count(memview), lineno);
-    first_time = __pyx_add_acquisition_count(memview) == 0;
-    if (unlikely(first_time)) {
-        if (have_gil) {
-            Py_INCREF((PyObject *) memview);
-        } else {
-            PyGILState_STATE _gilstate = PyGILState_Ensure();
-            Py_INCREF((PyObject *) memview);
-            PyGILState_Release(_gilstate);
-        }
-    }
-}
-static CYTHON_INLINE void __Pyx_XDEC_MEMVIEW(__Pyx_memviewslice *memslice,
-                                             int have_gil, int lineno) {
-    int last_time;
-    struct __pyx_memoryview_obj *memview = memslice->memview;
-    if (unlikely(!memview || (PyObject *) memview == Py_None)) {
-        memslice->memview = NULL;
-        return;
-    }
-    if (unlikely(__pyx_get_slice_count(memview) <= 0))
-        __pyx_fatalerror("Acquisition count is %d (line %d)",
-                         __pyx_get_slice_count(memview), lineno);
-    last_time = __pyx_sub_acquisition_count(memview) == 1;
-    memslice->data = NULL;
-    if (unlikely(last_time)) {
-        if (have_gil) {
-            Py_CLEAR(memslice->memview);
-        } else {
-            PyGILState_STATE _gilstate = PyGILState_Ensure();
-            Py_CLEAR(memslice->memview);
-            PyGILState_Release(_gilstate);
-        }
-    } else {
-        memslice->memview = NULL;
-    }
 }
 
 /* PyErrFetchRestore */

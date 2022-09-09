@@ -11,12 +11,16 @@ from numpy.polynomial.chebyshev import Chebyshev as cheb
 from numpy.typing import NDArray
 from scipy.interpolate import interp1d
 from scipy.signal import find_peaks
-from spectraltools.ext.convexhulls import uc_hulls
+from spectraltools.hulls.convexhulls import uc_hulls
 
 warnings.simplefilter('ignore', np.RankWarning)  # stop polyfit rankwarnings
 
 @dataclass
 class Features:
+    """ 
+    The Features class is the output from running spectraltools.extraction.extract_spectral_features
+    Besides the actual features found it contains all the options that were used to run the extraction.
+    """
     extracted_features: NDArray
     max_features: int
     do_hull: bool
@@ -34,6 +38,26 @@ class Features:
 
 
 def _mp_leadin(spectral_array: NDArray, ordinates: NDArray, distance: int, max_features: int, prominence: float, height: float, threshold: float, width: int, wlen: float, fit_type: str, resolution: float) -> list:
+    """_mp_leadin 
+    This method preps the incoming data so it can be run with your laptop/pc multiprocessing.
+    To do this requires the main code is run in a main guard. If its not and you say it is then expect havoc to ensue.
+
+    Args:
+        spectral_array (NDArray): 2D [N, #bands] or 3D [N, M, #bands]
+        ordinates (NDArray): ordinates of the incoming spectral_array [#bands]
+        distance (int): The closest distance in bands that one feature can be to another
+        max_features (int): How many features you want returned. If less are found they are returned as zeros
+        prominence (float): minimum prominence to consider. prominence is like a contour height 
+        height (float): minimum base to peak height to consider
+        threshold (float): unused
+        width (int): minimum width in bands to consider
+        wlen (float): buffer around peaks for defining a feature. This can do weird stuff. I leave it as None
+        fit_type (str): 'cheb' or 'raw': default is 'cheb'. Produces smoothing in noisy spectra and lets you define the output resolution
+        resolution (float): desired output resolution
+
+    Returns:
+        list: The calculated spectral features. The incoming spectral arrays dimension are preserved.
+    """
 
     chunks = mp.cpu_count()
     sub_arrays = np.array_split(spectral_array, chunks)
@@ -51,11 +75,17 @@ def _mp_process_data(spectral_array, ordinates, distance, max_features, prominen
     Used for multiprocessing of image files (since they are usually large). Allows for large speed ups in processing
 
     Args:
-        spectral_array (iterable): the spectral data
-        ordinates (numpy): the spectral ordinates associated with the spectral data
-        distance (int): how many bands apart at a minimum should features be
-        max_features (int): the maximum number of features to return
-        prominence (float): a cutoff value for the feature depth (below which its assumed its not a feature)
+        spectral_array (NDArray): 2D [N, #bands] or 3D [N, M, #bands]
+        ordinates (NDArray): ordinates of the incoming spectral_array [#bands]
+        distance (int): The closest distance in bands that one feature can be to another
+        max_features (int): How many features you want returned. If less are found they are returned as zeros
+        prominence (float): minimum prominence to consider. prominence is like a contour height 
+        height (float): minimum base to peak height to consider
+        threshold (float): unused
+        width (int): minimum width in bands to consider
+        wlen (float): buffer around peaks for defining a feature. This can do weird stuff. I leave it as None
+        fit_type (str): 'cheb' or 'raw': default is 'cheb'. Produces smoothing in noisy spectra and lets you define the output resolution
+        resolution (float): desired output resolution
 
     Returns: the calculated feature information
 
@@ -82,30 +112,21 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
     """_process_signal _summary_
 
     Args:
-        signal (NDArray): _description_
-        ordinates (NDArray): _description_
-        max_features (int, optional): _description_. Defaults to 4.
-        height (float, optional): _description_. Defaults to None.
-        threshold (float, optional): _description_. Defaults to None.
-        distance (int, optional): _description_. Defaults to None.
-        prominence (float, optional): _description_. Defaults to None.
-        width (float, optional): _description_. Defaults to None.
-        wlen (float, optional): _description_. Defaults to None.
-        fit_type (str, optional): _description_. Defaults to 'cheb'.
-        resolution (float, optional): _description_. Defaults to None.
+        spectral_array (NDArray): 2D [N, #bands] or 3D [N, M, #bands]
+        ordinates (NDArray): ordinates of the incoming spectral_array [#bands]
+        distance (int): The closest distance in bands that one feature can be to another
+        max_features (int): How many features you want returned. If less are found they are returned as zeros
+        prominence (float): minimum prominence to consider. prominence is like a contour height 
+        height (float): minimum base to peak height to consider
+        threshold (float): unused
+        width (int): minimum width in bands to consider
+        wlen (float): buffer around peaks for defining a feature. This can do weird stuff. I leave it as None
+        fit_type (str): 'cheb' or 'raw': default is 'cheb'. Produces smoothing in noisy spectra and lets you define the output resolution
+        resolution (float): desired output resolution
+
     """
     def _remove_excess_features(max_features, peaks, peaks_properties, indices, ordinates):
-        """_remove_excess_features _summary_
-
-        Args:
-            max_features (_type_): _description_
-            peaks (_type_): _description_
-            peaks_properties (_type_): _description_
-            indices (_type_): _description_
-            ordinates (_type_): _description_
-
-        Returns:
-            _type_: _description_
+        """_remove_excess_features 
         """
         if len(indices) >= max_features:
             indices = indices[:max_features]
@@ -220,7 +241,7 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
 
     Args:
         instrument_data (NDArray): incoming spectral data array 1D, 2D [N, Bands], 3D [Row, Col, Bands]
-        ordinates (NDArray): ordinates corresponding to the spectral array 
+        ordinates (NDArray): ordinates corresponding to the spectral array [Bands]
         max_features (int, optional): Maximum number of features to look for. Defaults to 4.
         do_hull (bool, optional): Apply a hull correction prior to looking for features. Need to do this with refrlectance. Defaults to False.
         hull_type (int, optional): 0 - hull quotient, 1 - hull removal, 2 - return hull. Defaults to 0.
@@ -337,7 +358,7 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
 
     if fit_type != 'crude':
         if spectral_array.ndim == 1:
-            # TODO This could be run in multiprocessing. I(N FACT THIS IS PROBS WRONG IF ITS A SINGLE SPECTRUM!!)
+            # This could be run in multiprocessing. I(N FACT THIS IS PROBS WRONG IF ITS A SINGLE SPECTRUM!!)
             for signal in _generator(spectral_array):
                 # return the peaks_ordinates, prominences and widths
                 feature_info.append(

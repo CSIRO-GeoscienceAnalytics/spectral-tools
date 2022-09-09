@@ -4,56 +4,6 @@ from numpy import empty, double
 from multiprocessing import cpu_count
 cdef int NUM_THREADS = cpu_count()
 
-def get_absorption(wavelengths, spectra, hull_type):
-    """
-    Modified: Andrew Rodger, CSIRO Mineral Resources (15/02/2020)
-
-    Original author: Jess Robertson, CSIRO Mineral Resources
-
-    date: March 2016
-
-    (sk)Hulls for the skull god!
-
-    Apply a hull correction to incoming spectral data, or alternatively return the hull of the spectra
-
-    Args:
-        spectra (ndarray): the spectral data for processing. Can be a single spectrum, or N samples (NxB), or an image (NxMxB)
-        wavelengths (ndarray): the wavelengths corresponding to the spectral data
-        hull_type (int): 0 is hull quotient (1.0 - spectrum/hull), 1 is hull removed (hull - spectrum), and 2 is the actual sk(Hull)
-
-    Returns:
-        ndarray: an array (the same shape as spectral data array) of hull corrected spectra
-
-    """
-    # make the arrays doubles
-    spectra = double(spectra)
-    wavelengths = double(wavelengths)
-
-    # Allocate some memory for absorptions
-    absorption = empty(shape=spectra.shape)
-
-    # see if its the hull quotient or hull removed
-    if hull_type == 0:
-        hull_type = 0
-    elif hull_type == 1:
-        hull_type = 1
-    else:
-        hull_type = 2
-
-    # Do lookup for dimension-specific call
-    if (spectra.ndim == 1):
-        extract_hull_0d(spectra, absorption, wavelengths, hull_type)
-
-    elif (spectra.ndim == 2):
-        extract_hull_1d(spectra, absorption, wavelengths, hull_type)
-
-    elif (spectra.ndim == 3):
-        extract_hull_2d(spectra, absorption, wavelengths, hull_type)
-    else:
-        raise NotImplementedError(
-            'Extraction not available for raster dimension >= 3')
-    return absorption
-
 # CYTHON CODE
 @cython.cdivision(True)
 @cython.boundscheck(False)
@@ -141,5 +91,58 @@ cdef void extract_hull_2d(double [:, :, :] spectrum, double[:, :, :] absorption,
         for iidx in prange(nx, schedule='dynamic'):
             for jidx in range(ny):
                 extract_subhull(spectrum[iidx, jidx], absorption[iidx, jidx], wavelengths, 0, nwvl, hull_type)
+                
+
+def get_absorption(wavelengths, spectra, hull_type):
+    """
+    Modified: Andrew Rodger, CSIRO Mineral Resources (15/02/2020)
+
+    Original author: Jess Robertson, CSIRO Mineral Resources
+
+    date: March 2016
+
+    (sk)Hulls for the skull god!
+
+    Apply a hull correction to incoming spectral data, or alternatively return the hull of the spectra
+
+    Args:
+        spectra (ndarray): the spectral data for processing. Can be a single spectrum, or N samples (NxB), or an image (NxMxB)
+        wavelengths (ndarray): the wavelengths corresponding to the spectral data
+        hull_type (int): 0 is hull quotient (1.0 - spectrum/hull), 1 is hull removed (hull - spectrum), and 2 is the actual sk(Hull)
+
+    Returns:
+        ndarray: an array (the same shape as spectral data array) of hull corrected spectra
+
+    """
+    # make the arrays doubles
+    spectra = double(spectra)
+    wavelengths = double(wavelengths)
+
+    # Allocate some memory for absorptions
+    absorption = empty(shape=spectra.shape)
+
+    # see if its the hull quotient or hull removed
+    if hull_type == 0:
+        hull_type = 0
+    elif hull_type == 1:
+        hull_type = 1
+    else:
+        hull_type = 2
+
+    # Do lookup for dimension-specific call
+    if (spectra.ndim == 1):
+        extract_hull_0d(spectra, absorption, wavelengths, hull_type)
+
+    elif (spectra.ndim == 2):
+        extract_hull_1d(spectra, absorption, wavelengths, hull_type)
+
+    elif (spectra.ndim == 3):
+        extract_hull_2d(spectra, absorption, wavelengths, hull_type)
+    else:
+        raise NotImplementedError(
+            'Extraction not available for raster dimension >= 3')
+    return absorption
+
+
 
 

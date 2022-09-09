@@ -1,8 +1,4 @@
-""" _summary_
 
-Returns:
-    _description_
-"""
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Union
@@ -14,21 +10,23 @@ from spectral.io import envi
 
 @dataclass
 class Spectra:
-    """ _summary_
+    """ 
+    Data returned from calling read_envi. Contains the spectral data, the ordinates and the header file information.
     """
     ordinates: NDArray
     spectra: NDArray
     header_info: dict
 
 def read_envi(envi_datafile: Union[Path, str], envi_hdrfile: Union[Path, str]) -> Spectra:
-    """read_envi _summary_
+    """
+    Read an envi spectral file. An ENVI file has a binary file and an accompanying .hdr file
 
     Args:
-        envi_datafile: _description_
-        envi_hdrfile: _description_
+        envi_datafile: pathlib Path or string literal of the envi binary files
+        envi_hdrfile: pathlib Path or string literal of the header file for the above
 
     Returns:
-        _description_
+        A class containing the ordinates, spectra and data contained in the header file
     """
     spectral_data: Union[envi.SpyFile, envi.SpectralLibrary]
     header_data: dict

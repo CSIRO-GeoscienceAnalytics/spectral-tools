@@ -34,7 +34,17 @@ def _get_csv_data(csv_file: Union[Path, str], csv_order: int = 1) -> tuple[NDArr
     return ordinates, spectra, names
 
 def read_csv(csv_file: Union[Path, str], csv_order: int = 1) -> Spectra:
+    """read_csv 
+    Gather up wavelengths, spectral data and spectra names from a csv file. This is just a small wrapper
+    around a pandas read_csv
 
+    Args:
+        csv_file (Union[Path, str]):pathlib Path to csv file or string literal to file 
+        csv_order (int, optional): 1 = wavelength first column, 0 = wavelength first row. Defaults to 1.
+
+    Returns:
+        Spectra: Spectra class
+    """
     # """read_csv Read spectral data from a CSV file
 
     # Args:

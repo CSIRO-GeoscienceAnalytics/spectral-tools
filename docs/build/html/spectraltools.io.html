@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>spectraltools.io package &mdash; spectraltools 0.01 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="spectraltools.hulls package" href="spectraltools.hulls.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> spectraltools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">spectraltools</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="spectraltools.html">spectraltools package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="spectraltools.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="spectraltools.extraction.html">spectraltools.extraction package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spectraltools.hulls.html">spectraltools.hulls package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">spectraltools.io package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="spectraltools.html#module-spectraltools">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">spectraltools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">spectraltools</a> &raquo;</li>
+          <li><a href="spectraltools.html">spectraltools package</a> &raquo;</li>
+      <li>spectraltools.io package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/spectraltools.io.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="spectraltools-io-package">
+<h1>spectraltools.io package<a class="headerlink" href="#spectraltools-io-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-spectraltools.io.parse_csv">
+<span id="spectraltools-io-parse-csv-module"></span><h2>spectraltools.io.parse_csv module<a class="headerlink" href="#module-spectraltools.io.parse_csv" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="spectraltools.io.parse_csv.Spectra">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_csv.</span></span><span class="sig-name descname"><span class="pre">Spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ordinates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray[typing.Any,</span> <span class="pre">numpy.dtype[+ScalarType]]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray[typing.Any,</span> <span class="pre">numpy.dtype[+ScalarType]]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spectraltools.io.parse_csv.Spectra" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_csv.Spectra.ordinates">
+<span class="sig-name descname"><span class="pre">ordinates</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#spectraltools.io.parse_csv.Spectra.ordinates" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_csv.Spectra.sample_names">
+<span class="sig-name descname"><span class="pre">sample_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#spectraltools.io.parse_csv.Spectra.sample_names" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_csv.Spectra.spectra">
+<span class="sig-name descname"><span class="pre">spectra</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#spectraltools.io.parse_csv.Spectra.spectra" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraltools.io.parse_csv.read_csv">
+<span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_csv.</span></span><span class="sig-name descname"><span class="pre">read_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">csv_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csv_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#spectraltools.io.parse_csv.Spectra" title="spectraltools.io.parse_csv.Spectra"><span class="pre">Spectra</span></a></span></span><a class="headerlink" href="#spectraltools.io.parse_csv.read_csv" title="Permalink to this definition"></a></dt>
+<dd><p>Gather up wavelengths, spectral data and spectra names from a csv file. This is just a small wrapper
+around a pandas read_csv</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>csv_file</strong> (<em>Union</em><em>[</em><em>Path</em><em>, </em><em>str</em><em>]</em>) – pathlib Path to csv file or string literal to file</p></li>
+<li><p><strong>csv_order</strong> (<em>int</em><em>, </em><em>optional</em>) – 1 = wavelength first column, 0 = wavelength first row. Defaults to 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Spectra class</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#spectraltools.io.parse_csv.Spectra" title="spectraltools.io.parse_csv.Spectra">Spectra</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-spectraltools.io.parse_envi">
+<span id="spectraltools-io-parse-envi-module"></span><h2>spectraltools.io.parse_envi module<a class="headerlink" href="#module-spectraltools.io.parse_envi" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="spectraltools.io.parse_envi.Spectra">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_envi.</span></span><span class="sig-name descname"><span class="pre">Spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ordinates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spectraltools.io.parse_envi.Spectra" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Data returned from calling read_envi. Contains the spectral data, the ordinates and the header file information.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_envi.Spectra.header_info">
+<span class="sig-name descname"><span class="pre">header_info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#spectraltools.io.parse_envi.Spectra.header_info" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_envi.Spectra.ordinates">
+<span class="sig-name descname"><span class="pre">ordinates</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#spectraltools.io.parse_envi.Spectra.ordinates" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_envi.Spectra.spectra">
+<span class="sig-name descname"><span class="pre">spectra</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#spectraltools.io.parse_envi.Spectra.spectra" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraltools.io.parse_envi.read_envi">
+<span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_envi.</span></span><span class="sig-name descname"><span class="pre">read_envi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">envi_datafile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">envi_hdrfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#spectraltools.io.parse_envi.Spectra" title="spectraltools.io.parse_envi.Spectra"><span class="pre">Spectra</span></a></span></span><a class="headerlink" href="#spectraltools.io.parse_envi.read_envi" title="Permalink to this definition"></a></dt>
+<dd><p>Read an envi spectral file. An ENVI file has a binary file and an accompanying .hdr file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>envi_datafile</strong> – pathlib Path or string literal of the envi binary files</p></li>
+<li><p><strong>envi_hdrfile</strong> – pathlib Path or string literal of the header file for the above</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A class containing the ordinates, spectra and data contained in the header file</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-spectraltools.io.parse_numpy">
+<span id="spectraltools-io-parse-numpy-module"></span><h2>spectraltools.io.parse_numpy module<a class="headerlink" href="#module-spectraltools.io.parse_numpy" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="spectraltools.io.parse_numpy.Spectra">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_numpy.</span></span><span class="sig-name descname"><span class="pre">Spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ordinates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spectraltools.io.parse_numpy.Spectra" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Data from calling read_numpy. Its a bit naff really as its already in a numpy format and
+all this will do is stick it into this class so its together. Cant really see this being of much use.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_numpy.Spectra.ordinates">
+<span class="sig-name descname"><span class="pre">ordinates</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#spectraltools.io.parse_numpy.Spectra.ordinates" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_numpy.Spectra.spectra">
+<span class="sig-name descname"><span class="pre">spectra</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#spectraltools.io.parse_numpy.Spectra.spectra" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraltools.io.parse_numpy.read_numpy">
+<span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_numpy.</span></span><span class="sig-name descname"><span class="pre">read_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">numpy_ordinates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numpy_spectra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#spectraltools.io.parse_numpy.Spectra" title="spectraltools.io.parse_numpy.Spectra"><span class="pre">Spectra</span></a></span></span><a class="headerlink" href="#spectraltools.io.parse_numpy.read_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>Take 2 numpy arrays of ordinates and spectral data and drop them into a class containing….
+wait for it, 2 numpy arrays :)
+This is a dumb one that really is not needed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>numpy_ordinates</strong> (<em>NDArray</em>) – ordinates of the spectral data [#bands]</p></li>
+<li><p><strong>numpy_spectra</strong> (<em>NDArray</em>) – the spectral data, 1D [#bands], 2D [N, #bands], 3D [N, M, #bands]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A class containing both things in one class. Wow!!</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#spectraltools.io.parse_numpy.Spectra" title="spectraltools.io.parse_numpy.Spectra">Spectra</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-spectraltools.io.parse_tsg">
+<span id="spectraltools-io-parse-tsg-module"></span><h2>spectraltools.io.parse_tsg module<a class="headerlink" href="#module-spectraltools.io.parse_tsg" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.BandHeaders">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_tsg.</span></span><span class="sig-name descname"><span class="pre">BandHeaders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spectraltools.io.parse_tsg.BandHeaders" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.BandHeaders.band">
+<span class="sig-name descname"><span class="pre">band</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.BandHeaders.band" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.BandHeaders.class_number">
+<span class="sig-name descname"><span class="pre">class_number</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.BandHeaders.class_number" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.BandHeaders.flag">
+<span class="sig-name descname"><span class="pre">flag</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.BandHeaders.flag" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.BandHeaders.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.BandHeaders.name" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.ClassHeaders">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_tsg.</span></span><span class="sig-name descname"><span class="pre">ClassHeaders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spectraltools.io.parse_tsg.ClassHeaders" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.ClassHeaders.class_number">
+<span class="sig-name descname"><span class="pre">class_number</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.ClassHeaders.class_number" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.ClassHeaders.classes">
+<span class="sig-name descname"><span class="pre">classes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.ClassHeaders.classes" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.ClassHeaders.map_ints">
+<span class="sig-name descname"><span class="pre">map_ints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#spectraltools.io.parse_tsg.ClassHeaders.map_ints" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.ClassHeaders.max">
+<span class="sig-name descname"><span class="pre">max</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.ClassHeaders.max" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.ClassHeaders.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.ClassHeaders.name" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.Cras">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_tsg.</span></span><span class="sig-name descname"><span class="pre">Cras</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray[typing.Any,</span> <span class="pre">numpy.dtype[+ScalarType]]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tray</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'list[TrayInfo]'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'list[SectionInfo]'</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spectraltools.io.parse_tsg.Cras" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.Cras.image">
+<span class="sig-name descname"><span class="pre">image</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.Cras.image" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.Cras.section">
+<span class="sig-name descname"><span class="pre">section</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#spectraltools.io.parse_tsg.SectionInfo" title="spectraltools.io.parse_tsg.SectionInfo"><span class="pre">spectraltools.io.parse_tsg.SectionInfo</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.Cras.section" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.Cras.tray">
+<span class="sig-name descname"><span class="pre">tray</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#spectraltools.io.parse_tsg.TrayInfo" title="spectraltools.io.parse_tsg.TrayInfo"><span class="pre">spectraltools.io.parse_tsg.TrayInfo</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.Cras.tray" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_tsg.</span></span><span class="sig-name descname"><span class="pre">CrasHeader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specny</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specnx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specpx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ctype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nchunks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csize32_obs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ntrays</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsections</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finerep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jpqual</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.chunksize">
+<span class="sig-name descname"><span class="pre">chunksize</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.chunksize" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 10</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.csize32_obs">
+<span class="sig-name descname"><span class="pre">csize32_obs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.csize32_obs" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 12</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.ctype">
+<span class="sig-name descname"><span class="pre">ctype</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.ctype" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 9</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.dtype">
+<span class="sig-name descname"><span class="pre">dtype</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.dtype" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.finerep">
+<span class="sig-name descname"><span class="pre">finerep</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.finerep" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 15</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.id" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.jpqual">
+<span class="sig-name descname"><span class="pre">jpqual</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.jpqual" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 16</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.nb">
+<span class="sig-name descname"><span class="pre">nb</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.nb" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.nchunks">
+<span class="sig-name descname"><span class="pre">nchunks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.nchunks" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 11</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.nl">
+<span class="sig-name descname"><span class="pre">nl</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.nl" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.ns">
+<span class="sig-name descname"><span class="pre">ns</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.ns" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.nsections">
+<span class="sig-name descname"><span class="pre">nsections</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.nsections" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 14</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.ntrays">
+<span class="sig-name descname"><span class="pre">ntrays</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.ntrays" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 13</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.org">
+<span class="sig-name descname"><span class="pre">org</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.org" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.specnx">
+<span class="sig-name descname"><span class="pre">specnx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.specnx" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 7</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.specny">
+<span class="sig-name descname"><span class="pre">specny</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.specny" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 6</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.CrasHeader.specpx">
+<span class="sig-name descname"><span class="pre">specpx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.CrasHeader.specpx" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 8</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.FilePairs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_tsg.</span></span><span class="sig-name descname"><span class="pre">FilePairs</span></span><a class="headerlink" href="#spectraltools.io.parse_tsg.FilePairs" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for keeping track of an item in inventory.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.FilePairs.cras">
+<span class="sig-name descname"><span class="pre">cras</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.FilePairs.cras" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.FilePairs.lidar">
+<span class="sig-name descname"><span class="pre">lidar</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.FilePairs.lidar" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.FilePairs.nir_bip">
+<span class="sig-name descname"><span class="pre">nir_bip</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.FilePairs.nir_bip" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.FilePairs.nir_tsg">
+<span class="sig-name descname"><span class="pre">nir_tsg</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.FilePairs.nir_tsg" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.FilePairs.tir_bip">
+<span class="sig-name descname"><span class="pre">tir_bip</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.FilePairs.tir_bip" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.FilePairs.tir_tsg">
+<span class="sig-name descname"><span class="pre">tir_tsg</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.FilePairs.tir_tsg" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.FilePairs.valid_cras">
+<span class="sig-name descname"><span class="pre">valid_cras</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#spectraltools.io.parse_tsg.FilePairs.valid_cras" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.FilePairs.valid_lidar">
+<span class="sig-name descname"><span class="pre">valid_lidar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#spectraltools.io.parse_tsg.FilePairs.valid_lidar" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.FilePairs.valid_nir">
+<span class="sig-name descname"><span class="pre">valid_nir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#spectraltools.io.parse_tsg.FilePairs.valid_nir" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.FilePairs.valid_tir">
+<span class="sig-name descname"><span class="pre">valid_tir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#spectraltools.io.parse_tsg.FilePairs.valid_tir" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.SectionInfo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_tsg.</span></span><span class="sig-name descname"><span class="pre">SectionInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">utlengthmm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startmm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endmm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trimwidthmm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startcol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endcol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nlines</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spectraltools.io.parse_tsg.SectionInfo" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.SectionInfo.endcol">
+<span class="sig-name descname"><span class="pre">endcol</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.SectionInfo.endcol" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.SectionInfo.endmm">
+<span class="sig-name descname"><span class="pre">endmm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.SectionInfo.endmm" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.SectionInfo.nlines">
+<span class="sig-name descname"><span class="pre">nlines</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.SectionInfo.nlines" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 6</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.SectionInfo.startcol">
+<span class="sig-name descname"><span class="pre">startcol</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.SectionInfo.startcol" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.SectionInfo.startmm">
+<span class="sig-name descname"><span class="pre">startmm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.SectionInfo.startmm" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.SectionInfo.trimwidthmm">
+<span class="sig-name descname"><span class="pre">trimwidthmm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.SectionInfo.trimwidthmm" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.SectionInfo.utlengthmm">
+<span class="sig-name descname"><span class="pre">utlengthmm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.SectionInfo.utlengthmm" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.Spectra">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_tsg.</span></span><span class="sig-name descname"><span class="pre">Spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray[typing.Any,</span> <span class="pre">numpy.dtype[+ScalarType]]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray[typing.Any,</span> <span class="pre">numpy.dtype[+ScalarType]]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampleheaders</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'list[dict[str,</span> <span class="pre">Any]]'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bandheaders</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'list[BandHeaders]'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalars</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spectraltools.io.parse_tsg.Spectra" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.Spectra.bandheaders">
+<span class="sig-name descname"><span class="pre">bandheaders</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#spectraltools.io.parse_tsg.BandHeaders" title="spectraltools.io.parse_tsg.BandHeaders"><span class="pre">spectraltools.io.parse_tsg.BandHeaders</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.Spectra.bandheaders" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.Spectra.classes">
+<span class="sig-name descname"><span class="pre">classes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.Spectra.classes" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.Spectra.sampleheaders">
+<span class="sig-name descname"><span class="pre">sampleheaders</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.Spectra.sampleheaders" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.Spectra.scalars">
+<span class="sig-name descname"><span class="pre">scalars</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.Spectra.scalars" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.Spectra.spectra">
+<span class="sig-name descname"><span class="pre">spectra</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.Spectra.spectra" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.Spectra.spectrum_name">
+<span class="sig-name descname"><span class="pre">spectrum_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.Spectra.spectrum_name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.Spectra.wavelength">
+<span class="sig-name descname"><span class="pre">wavelength</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.Spectra.wavelength" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.TSG">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_tsg.</span></span><span class="sig-name descname"><span class="pre">TSG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#spectraltools.io.parse_tsg.Spectra" title="spectraltools.io.parse_tsg.Spectra"><span class="pre">spectraltools.io.parse_tsg.Spectra</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#spectraltools.io.parse_tsg.Spectra" title="spectraltools.io.parse_tsg.Spectra"><span class="pre">spectraltools.io.parse_tsg.Spectra</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cras</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#spectraltools.io.parse_tsg.Cras" title="spectraltools.io.parse_tsg.Cras"><span class="pre">spectraltools.io.parse_tsg.Cras</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lidar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional[numpy.ndarray[Any,</span> <span class="pre">numpy.dtype[+ScalarType]]]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spectraltools.io.parse_tsg.TSG" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.TSG.cras">
+<span class="sig-name descname"><span class="pre">cras</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#spectraltools.io.parse_tsg.Cras" title="spectraltools.io.parse_tsg.Cras"><span class="pre">Cras</span></a></em><a class="headerlink" href="#spectraltools.io.parse_tsg.TSG.cras" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.TSG.lidar">
+<span class="sig-name descname"><span class="pre">lidar</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.TSG.lidar" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.TSG.nir">
+<span class="sig-name descname"><span class="pre">nir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#spectraltools.io.parse_tsg.Spectra" title="spectraltools.io.parse_tsg.Spectra"><span class="pre">Spectra</span></a></em><a class="headerlink" href="#spectraltools.io.parse_tsg.TSG.nir" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.TSG.tir">
+<span class="sig-name descname"><span class="pre">tir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#spectraltools.io.parse_tsg.Spectra" title="spectraltools.io.parse_tsg.Spectra"><span class="pre">Spectra</span></a></em><a class="headerlink" href="#spectraltools.io.parse_tsg.TSG.tir" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.TrayInfo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_tsg.</span></span><span class="sig-name descname"><span class="pre">TrayInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">utlengthmm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseheightmm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coreheightmm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsections</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nlines</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spectraltools.io.parse_tsg.TrayInfo" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.TrayInfo.baseheightmm">
+<span class="sig-name descname"><span class="pre">baseheightmm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.TrayInfo.baseheightmm" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.TrayInfo.coreheightmm">
+<span class="sig-name descname"><span class="pre">coreheightmm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.TrayInfo.coreheightmm" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.TrayInfo.nlines">
+<span class="sig-name descname"><span class="pre">nlines</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.TrayInfo.nlines" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.TrayInfo.nsections">
+<span class="sig-name descname"><span class="pre">nsections</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.TrayInfo.nsections" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.TrayInfo.utlengthmm">
+<span class="sig-name descname"><span class="pre">utlengthmm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#spectraltools.io.parse_tsg.TrayInfo.utlengthmm" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.extract_chips">
+<span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_tsg.</span></span><span class="sig-name descname"><span class="pre">extract_chips</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfolder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#spectraltools.io.parse_tsg.Spectra" title="spectraltools.io.parse_tsg.Spectra"><span class="pre">Spectra</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spectraltools.io.parse_tsg.extract_chips" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.read_cras">
+<span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_tsg.</span></span><span class="sig-name descname"><span class="pre">read_cras</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#spectraltools.io.parse_tsg.Cras" title="spectraltools.io.parse_tsg.Cras"><span class="pre">Cras</span></a></span></span><a class="headerlink" href="#spectraltools.io.parse_tsg.read_cras" title="Permalink to this definition"></a></dt>
+<dd><p>Read a cras file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> – filename to read</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A cras object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.read_hires_dat">
+<span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_tsg.</span></span><span class="sig-name descname"><span class="pre">read_hires_dat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">ScalarType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#spectraltools.io.parse_tsg.read_hires_dat" title="Permalink to this definition"></a></dt>
+<dd><p>Read the <em>hires.dat</em> file which contains the lidar scan
+of the material</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> – location of the .dat file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>np.ndarray representing the</p>
+</dd>
+</dl>
+<p>Examples:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.read_package">
+<span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_tsg.</span></span><span class="sig-name descname"><span class="pre">read_package</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">foldername</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_cras_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract_cras</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imageoutput</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#spectraltools.io.parse_tsg.TSG" title="spectraltools.io.parse_tsg.TSG"><span class="pre">TSG</span></a></span></span><a class="headerlink" href="#spectraltools.io.parse_tsg.read_package" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraltools.io.parse_tsg.read_tsg_bip_pair">
+<span class="sig-prename descclassname"><span class="pre">spectraltools.io.parse_tsg.</span></span><span class="sig-name descname"><span class="pre">read_tsg_bip_pair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsg_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bip_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectrum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#spectraltools.io.parse_tsg.Spectra" title="spectraltools.io.parse_tsg.Spectra"><span class="pre">Spectra</span></a></span></span><a class="headerlink" href="#spectraltools.io.parse_tsg.read_tsg_bip_pair" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-spectraltools.io">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-spectraltools.io" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="spectraltools.hulls.html" class="btn btn-neutral float-left" title="spectraltools.hulls package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Andrew Rodger.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
