@@ -31,7 +31,7 @@ It does have a precompiled cython file in the spectraltools/ext folder for perfo
 I have tried various python only implementations of hull correction routines but haven't found them to be fast enough. I probably need to look closer at `qhull`. With that said their is python only hulls routine in the package.
 
 Additionaly, if you want to run the feature extraction method then you need to run your routine in a main guard. If you dont then it will not allow you to use the
-multiprocessor component. This initself is not a bad thing and for small datasets (<20000 spectra I guess) it probably isnt needed anyway. If you are extracting features from spectral imagery however then not using the main guard and the main_guard=True keyword in spectraltools.extraction.extract_spectral_features will run noticeably slower due to the large number of samples.
+multiprocessor component. This initself is not a bad thing and for small datasets (<20000 spectra I guess) it probably isnt needed anyway. If you are extracting features from spectral imagery however then not using the main guard and the main_guard=True keyword in spectraltools.extraction.extraction.extract_spectral_features will run noticeably slower due to the large number of samples.
 
 ## Whats in the spectraltools package?
 
