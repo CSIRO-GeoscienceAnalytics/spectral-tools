@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "spectraltools"
+version = "0.1.0"
+description = "A small collection of tools that I have used to work with spectral data. A bunch of IO stuff, some spectral extraction stuff and some convex hull correction stuff."
+authors = ["Your Name <you@example.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^1.23.3"
+scipy = "^1.9.1"
+multiprocessing = "^2.6.2.1"
+dataclasses = "^0.8"
+typing = "^3.10.0.0"
+pathlib = "^1.0.1"
+pandas = "^1.4.4"
+spectral = "^0.23"
+simplejpeg = "^1.6.5"
+
+[tool.poetry.group.dev.dependencies]
+Cython = "^0.29.32"
+setuptools = "^65.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
