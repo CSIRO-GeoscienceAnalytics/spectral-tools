@@ -1,4 +1,4 @@
-""" 
+"""
 A collection of routines for feature extraction
 """
 import multiprocessing as mp
@@ -17,7 +17,7 @@ warnings.simplefilter('ignore', np.RankWarning)  # stop polyfit rankwarnings
 
 @dataclass
 class Features:
-    """ 
+    """
     The Features class is the output from running spectraltools.extraction.extract_spectral_features
     Besides the actual features found it contains all the options that were used to run the extraction.
     """
@@ -38,7 +38,7 @@ class Features:
 
 
 def _mp_leadin(spectral_array: NDArray, ordinates: NDArray, distance: int, max_features: int, prominence: float, height: float, threshold: float, width: int, wlen: float, fit_type: str, resolution: float) -> list:
-    """_mp_leadin 
+    """_mp_leadin
     This method preps the incoming data so it can be run with your laptop/pc multiprocessing.
     To do this requires the main code is run in a main guard. If its not and you say it is then expect havoc to ensue.
 
@@ -47,7 +47,7 @@ def _mp_leadin(spectral_array: NDArray, ordinates: NDArray, distance: int, max_f
         ordinates (NDArray): ordinates of the incoming spectral_array [#bands]
         distance (int): The closest distance in bands that one feature can be to another
         max_features (int): How many features you want returned. If less are found they are returned as zeros
-        prominence (float): minimum prominence to consider. prominence is like a contour height 
+        prominence (float): minimum prominence to consider. prominence is like a contour height
         height (float): minimum base to peak height to consider
         threshold (float): unused
         width (int): minimum width in bands to consider
@@ -79,7 +79,7 @@ def _mp_process_data(spectral_array, ordinates, distance, max_features, prominen
         ordinates (NDArray): ordinates of the incoming spectral_array [#bands]
         distance (int): The closest distance in bands that one feature can be to another
         max_features (int): How many features you want returned. If less are found they are returned as zeros
-        prominence (float): minimum prominence to consider. prominence is like a contour height 
+        prominence (float): minimum prominence to consider. prominence is like a contour height
         height (float): minimum base to peak height to consider
         threshold (float): unused
         width (int): minimum width in bands to consider
@@ -95,13 +95,13 @@ def _mp_process_data(spectral_array, ordinates, distance, max_features, prominen
         feature_info = [_process_signal(spectrum, ordinates, distance=distance,
                                                     max_features=max_features, prominence=prominence,
                                                     height=height, threshold=threshold,
-                                                    width=width, wlen=wlen, fit_type=fit_type, resolution=resolution) 
+                                                    width=width, wlen=wlen, fit_type=fit_type, resolution=resolution)
                                                     for spectrum in spectral_array]
     if spectral_array.ndim == 3:
         feature_info = [_process_signal(spectrum, ordinates, distance=distance, max_features=max_features,
                                         prominence=prominence,
                                         height=height, threshold=threshold,
-                                        width=width, wlen=wlen, fit_type=fit_type, resolution=resolution) 
+                                        width=width, wlen=wlen, fit_type=fit_type, resolution=resolution)
                                         for row in spectral_array for spectrum in row]
     return feature_info
 
@@ -116,7 +116,7 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
         ordinates (NDArray): ordinates of the incoming spectral_array [#bands]
         distance (int): The closest distance in bands that one feature can be to another
         max_features (int): How many features you want returned. If less are found they are returned as zeros
-        prominence (float): minimum prominence to consider. prominence is like a contour height 
+        prominence (float): minimum prominence to consider. prominence is like a contour height
         height (float): minimum base to peak height to consider
         threshold (float): unused
         width (int): minimum width in bands to consider
@@ -126,7 +126,7 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
 
     """
     def _remove_excess_features(max_features, peaks, peaks_properties, indices, ordinates):
-        """_remove_excess_features 
+        """_remove_excess_features
         """
         if len(indices) >= max_features:
             indices = indices[:max_features]
@@ -151,18 +151,18 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
 
 
     def _create_final_return_values(ordinates, peaks_properties, peak_ordinates):
-        
+
         xp = np.arange(ordinates.shape[0])
         values_in = [peaks_properties['left_ips'], peaks_properties['right_ips'], peaks_properties['left_bases'], peaks_properties['right_bases']]
-        
+
         values_out = np.interp(values_in, xp, ordinates)
         widths = values_out[1] - values_out[0]
-        
+
         indx = widths > 0
         asymmetry = np.zeros(values_out[0].shape)
         asymmetry[indx] = 2 * (
                 (values_out[1][indx] - np.array(peak_ordinates)[indx]) / (values_out[1][indx] - values_out[0][indx]) - 0.5)
-        
+
         return np.asarray(peak_ordinates), peaks_properties['prominences'], widths, asymmetry, \
                         peaks_properties['peak_heights'], values_out[2], values_out[3], values_out[0], values_out[1]
 
@@ -236,7 +236,7 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
     fit_type: str = 'cheb', resolution: float = 1.0, ordinates_inspection_range:  Optional[list[float, float]] = None,
     prominence: Optional[float] = None, height: Optional[float] = None, threshold: Optional[float] = None,
     distance: Optional[int] = None, width: Optional[float] = None, wlen: Optional[float] = None) -> Features:
-    """extract_spectral_features 
+    """extract_spectral_features
     This routine will extract spectral features from the input spectral data.
 
     Args:
@@ -259,7 +259,7 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
 
     Returns:
         Features: a class containing various input selections and of course the features found
-        
+
         The 9 parameters associated with a single feature are as follows,
 
         0: feature wavelength
@@ -291,7 +291,7 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
         depths = signal_array[..., :].max(axis=(signal_array.ndim-1))
         waves =  ordinates[signal_array[..., :].argmax(axis=(signal_array.ndim-1))]
         return depths, waves
-        
+
     def _hulls_if_required(ordinates_in: NDArray, spectral_array: NDArray, do_hull: bool = False, hull_type: int = 0) -> NDArray:
         # run a hull process if required
         if do_hull:

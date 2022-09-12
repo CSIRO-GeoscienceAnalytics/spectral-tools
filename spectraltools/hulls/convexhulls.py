@@ -1,4 +1,4 @@
-""" 
+"""
 Takes a spectral array and its ordinates and calculates a hull solution.
 This is a warpper to the extension chulls in spectraltools.ext.chulls
 
@@ -21,4 +21,3 @@ def uc_hulls(ordinates: NDArray, data: NDArray, hull_type: int=0) -> NDArray:
         NDArray: hull quotient or hull removed or hull
     """
     return chulls.get_absorption(ordinates, data, hull_type)
-    
