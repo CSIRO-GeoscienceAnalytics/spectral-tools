@@ -1,11 +1,11 @@
-spectraltools package
-=====================
+spectraltools
+=============
 
 Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    spectraltools.extraction
    spectraltools.hulls

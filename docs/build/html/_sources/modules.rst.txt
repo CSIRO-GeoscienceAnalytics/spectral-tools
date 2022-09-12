@@ -1,6 +1,3 @@
-spectraltools
-=============
-
 .. toctree::
    :maxdepth: 2
 
