@@ -6,6 +6,8 @@ found in the docs folder. I used to have a class for parsing TSG data but after 
 
 I used to have spectral unmixing routines in here as well but have removed them as they were really a bit (read a LOT) adhoc. They may come back in the future.
 
+There is some documentation that I created with Sphinx but alas I am not that adept at Sphink. Regardless it can be found in the docs folder
+
 ## Pre Installation Requirements (only if you need to build the extension file for doing convex hulls)
 
 1) setuptools >= 18.0
