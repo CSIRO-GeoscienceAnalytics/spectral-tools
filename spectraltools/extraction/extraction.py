@@ -169,6 +169,10 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
 
     def _chebyshev_fit(signal, ordinates, max_features, height, threshold, distance, prominence, width, wlen, resolution):
 
+        # set a distance if it hasnt already
+        if distance is None:
+            distance = 2
+
         # see if a user resolution has been set
         if resolution is None:
             resolution = 1.0
