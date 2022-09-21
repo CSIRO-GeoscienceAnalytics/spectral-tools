@@ -185,7 +185,7 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
 
         # fit and interpolate
         chubby = cheb.fit(ordinates, signal, cheb_deg)
-        interp_function = interp1d(ordinates, chubby(ordinates))
+        interp_function = interp1d(ordinates, chubby(ordinates), kind='cubic', fill_value='extrapolate')
         o = np.linspace(ordinates[0], ordinates[-1], resolution_multiplier)
         s = interp_function(o)
         end_buffer = distance
