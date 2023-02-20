@@ -65,7 +65,7 @@ setup(
     license='MIT',
     description='A collection of tools that I have used for working with hyperspectral data',
     install_requires=['numpy', 'spectral', 'pandas', 'scipy', 'scikit-learn'],
-    python_requires='>=3.10',
+    python_requires='>=3.8',
     setup_requires=['numpy', 'wheel'],
     zip_safe=False,
     # Cython extensions & other stuff

@@ -2,19 +2,15 @@
 name = "spectraltools"
 version = "0.1.0"
 description = "A small collection of tools that I have used to work with spectral data. A bunch of IO stuff, some spectral extraction stuff and some convex hull correction stuff."
-authors = ["Your Name <you@example.com>"]
+authors = ["Andrew Rodger", "Sam Bradley <sam.bradley@csiro.au>"]
 license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-numpy = "^1.23.3"
-scipy = "^1.9.1"
-multiprocessing = "^2.6.2.1"
-dataclasses = "^0.8"
-typing = "^3.10.0.0"
-pathlib = "^1.0.1"
-pandas = "^1.4.4"
+python = ">=3.8,<4"
+numpy = ">=1.18"
+scipy = ">=1.7.2"
+pandas = ">=1.1"
 spectral = "^0.23"
 simplejpeg = "^1.6.5"
 
