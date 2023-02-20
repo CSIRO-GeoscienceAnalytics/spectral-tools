@@ -2,7 +2,7 @@ import sys
 import textwrap
 
 import pkg_resources
-from setuptools import setup, find_packages, Extension
+from setuptools import Extension, find_packages, setup
 from setuptools.command.build_py import build_py as _build_py
 
 
@@ -64,7 +64,7 @@ if HAVE_CYTHON:
 
 setup(
     name="csiro-spectral-tools",
-    version="0.1.67",
+    version="0.2.0",
     packages=find_packages(),
     package_data={"csiro_spectral_tools": ["ext/*.pyd", "ext/*.so"]},
     include_package_data=True,
