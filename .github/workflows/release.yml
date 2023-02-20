@@ -12,7 +12,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.8, 3.9, 3.10, 3.11]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
 
     steps:
     - uses: actions/checkout@v3
@@ -34,39 +34,39 @@ jobs:
         name: dist-linux-${{ matrix.python-version }}
         path: dist
 
-  build-macos:
-    runs-on: macos-latest
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.8, 3.9, 3.10, 3.11]
+  # build-macos:
+  #   runs-on: macos-latest
+  #   strategy:
+  #     max-parallel: 4
+  #     matrix:
+  #       python-version: [3.8, 3.9, 3.10, 3.11]
 
-    steps:
-    - uses: actions/checkout@v3
+  #   steps:
+  #   - uses: actions/checkout@v3
 
-    - name: Set up Python ${{ matrix.python-version }} x64
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
+  #   - name: Set up Python ${{ matrix.python-version }} x64
+  #     uses: actions/setup-python@v4
+  #     with:
+  #       python-version: ${{ matrix.python-version }}
 
-    - name: Install Python package dependencies
-      run: pip install cython wheel
+  #   - name: Install Python package dependencies
+  #     run: pip install cython wheel
 
-    - name: Build binary wheel
-      run: python setup.py bdist_wheel
+  #   - name: Build binary wheel
+  #     run: python setup.py bdist_wheel
 
-    - name: Archive dist artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: dist-macos-${{ matrix.python-version }}
-        path: dist
+  #   - name: Archive dist artifacts
+  #     uses: actions/upload-artifact@v2
+  #     with:
+  #       name: dist-macos-${{ matrix.python-version }}
+  #       path: dist
 
   build-windows:
     runs-on: windows-latest
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.8, 3.9, 3.10, 3.11]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
 
     steps:
     - uses: actions/checkout@v3
@@ -141,29 +141,29 @@ jobs:
         name: dist-linux-3.11
     - run: mv -v dist-linux-3.11/* dist/
 
-    - name: Stage macos 3.8
-      uses: actions/download-artifact@v2
-      with:
-        name: dist-macos-3.8
-    - run: mv -v dist-macos-3.8/* dist/
+    # - name: Stage macos 3.8
+    #   uses: actions/download-artifact@v2
+    #   with:
+    #     name: dist-macos-3.8
+    # - run: mv -v dist-macos-3.8/* dist/
 
-    - name: Stage macos 3.9
-      uses: actions/download-artifact@v2
-      with:
-        name: dist-macos-3.9
-    - run: mv -v dist-macos-3.9/* dist/
+    # - name: Stage macos 3.9
+    #   uses: actions/download-artifact@v2
+    #   with:
+    #     name: dist-macos-3.9
+    # - run: mv -v dist-macos-3.9/* dist/
 
-    - name: Stage macos 3.10
-      uses: actions/download-artifact@v2
-      with:
-        name: dist-macos-3.10
-    - run: mv -v dist-macos-3.10/* dist/
+    # - name: Stage macos 3.10
+    #   uses: actions/download-artifact@v2
+    #   with:
+    #     name: dist-macos-3.10
+    # - run: mv -v dist-macos-3.10/* dist/
 
-    - name: Stage macos 3.11
-      uses: actions/download-artifact@v2
-      with:
-        name: dist-macos-3.11
-    - run: mv -v dist-macos-3.11/* dist/
+    # - name: Stage macos 3.11
+    #   uses: actions/download-artifact@v2
+    #   with:
+    #     name: dist-macos-3.11
+    # - run: mv -v dist-macos-3.11/* dist/
 
     - name: Stage windows 3.8
       uses: actions/download-artifact@v2
