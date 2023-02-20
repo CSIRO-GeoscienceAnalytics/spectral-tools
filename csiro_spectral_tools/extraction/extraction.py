@@ -4,14 +4,15 @@ A collection of routines for feature extraction
 import multiprocessing as mp
 import warnings
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Tuple
 
 import numpy as np
 from numpy.polynomial.chebyshev import Chebyshev as cheb
 from numpy.typing import NDArray
 from scipy.interpolate import interp1d
 from scipy.signal import find_peaks
-from spectraltools.hulls.convexhulls import uc_hulls
+
+from csiro_spectral_tools.hulls.convexhulls import uc_hulls
 
 warnings.simplefilter("ignore", np.RankWarning)  # stop polyfit rankwarnings
 
@@ -30,7 +31,7 @@ class Features:
     invert: bool
     fit_type: str
     resolution: float
-    ordinates_inspection_range: list[float, float]
+    ordinates_inspection_range: Tuple[float, float]
     prominence: float
     height: float
     threshold: float
@@ -367,7 +368,7 @@ def extract_spectral_features(
     main_guard: bool = False,
     fit_type: str = "cheb",
     resolution: float = 1.0,
-    ordinates_inspection_range: Optional[list[float, float]] = None,
+    ordinates_inspection_range: Optional[Tuple[float, float]] = None,
     prominence: Optional[float] = None,
     height: Optional[float] = None,
     threshold: Optional[float] = None,
@@ -446,7 +447,7 @@ def extract_spectral_features(
         return spectral_array
 
     def _extract_subset(
-        spectral_data_in: NDArray, ordinates: NDArray, ordinates_inspection_range: list[float, float]
+        spectral_data_in: NDArray, ordinates: NDArray, ordinates_inspection_range: Tuple[float, float]
     ) -> tuple[NDArray, NDArray]:
         # subset the data on wavelength if its called for
         range_index = np.searchsorted(ordinates, ordinates_inspection_range)
