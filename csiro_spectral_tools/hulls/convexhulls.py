@@ -1,13 +1,13 @@
 """
 Takes a spectral array and its ordinates and calculates a hull solution.
-This is a wrapper to the extension chulls in spectraltools.ext.chulls
+This is a wrapper to the extension chulls in csiro_spectral_tools.ext.chulls
 
 Returns:
     NDArray: hull quotient or hull removed or hull
 """
 from numpy.typing import NDArray
 
-from spectraltools.ext import chulls
+from csiro_spectral_tools.ext import chulls
 
 
 def uc_hulls(ordinates: NDArray, data: NDArray, hull_type: int = 0) -> NDArray:

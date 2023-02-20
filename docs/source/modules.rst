@@ -1,4 +1,4 @@
 .. toctree::
    :maxdepth: 2
 
-   spectraltools
+   csiro_spectral_tools

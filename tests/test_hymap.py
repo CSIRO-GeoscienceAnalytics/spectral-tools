@@ -12,7 +12,7 @@ from csiro_spectral_tools.extraction.extraction import extract_spectral_features
 from csiro_spectral_tools.hulls.convexhulls import uc_hulls
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-test_data = Path(dir_path) / "../spectraltools/data"
+test_data = Path(dir_path) / "../csiro_spectral_tools/data"
 ouput_path = Path(dir_path) / "output"
 
 # lets get a HyMap image

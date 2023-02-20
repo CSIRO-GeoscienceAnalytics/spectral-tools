@@ -20,7 +20,7 @@ warnings.simplefilter("ignore", np.RankWarning)  # stop polyfit rankwarnings
 @dataclass
 class Features:
     """
-    The Features class is the output from running spectraltools.extraction.extract_spectral_features
+    The Features class is the output from running csiro_spectral_tools.extraction.extract_spectral_features
     Besides the actual features found it contains all the options that were used to run the extraction.
     """
 
