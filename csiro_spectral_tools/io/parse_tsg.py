@@ -2,7 +2,7 @@ import re
 import struct
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, NamedTuple, Union
+from typing import Any, Dict, List, NamedTuple, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -15,10 +15,10 @@ class ClassHeaders(NamedTuple):
     class_number: int
     name: str
     max: int
-    classes: "dict[int, str]"
+    classes: "Dict[int, str]"
 
-    def map_ints(self, index: NDArray) -> "list[str]":
-        outindex: list[str] = []
+    def map_ints(self, index: NDArray) -> "List[str]":
+        outindex: List[str] = []
         for i in index:
             if i >= 0:
                 outindex.append(self.classes[i])
@@ -75,8 +75,8 @@ class BandHeaders(NamedTuple):
 @dataclass
 class Cras:
     image: NDArray
-    tray: "list[TrayInfo]"
-    section: "list[SectionInfo]"
+    tray: "List[TrayInfo]"
+    section: "List[SectionInfo]"
 
 
 @dataclass
@@ -85,8 +85,8 @@ class Spectra:
     spectra: NDArray
     wavelength: NDArray
     sampleheaders: pd.DataFrame
-    classes: "list[dict[str, Any]]"
-    bandheaders: "list[BandHeaders]"
+    classes: "List[Dict[str, Any]]"
+    bandheaders: "List[BandHeaders]"
     scalars: pd.DataFrame
 
 
@@ -131,9 +131,7 @@ class FilePairs:
         return pairs
 
     def _get_lidar(self) -> Union[Path, None]:
-        has_lidar: bool = ("lidar" in self.__dict__.keys()) and (
-            isinstance(self.lidar, Path)
-        )
+        has_lidar: bool = ("lidar" in self.__dict__.keys()) and (isinstance(self.lidar, Path))
         if has_lidar:
             pairs = self.lidar
         else:
@@ -244,19 +242,16 @@ def read_cras(filename: Union[str, Path]) -> Cras:
         # the tray info section if it exists should start after the last image
         # the section info and if there is a tray info section then it should be after the tray info section
         info_table_start = (
-            64
-            + (header.nchunks + 1) * 4
-            + chunk_offset_array[header.nchunks]
-            - chunk_offset_array[0]
+            64 + (header.nchunks + 1) * 4 + chunk_offset_array[header.nchunks] - chunk_offset_array[0]
         )
         file.seek(info_table_start)
 
-        tray: list[TrayInfo] = []
+        tray: List[TrayInfo] = []
         for i in range(header.ntrays):
             bytes = file.read(20)
             tray.append(TrayInfo(*struct.unpack(tray_info_format, bytes)))
 
-        section: list[SectionInfo] = []
+        section: List[SectionInfo] = []
         for i in range(header.nsections):
             bytes = file.read(28)
             section.append(SectionInfo(*struct.unpack(section_info_format, bytes)))
@@ -265,10 +260,7 @@ def read_cras(filename: Union[str, Path]) -> Cras:
     return output
 
 
-def extract_chips(
-    filename: Union[str, Path], outfolder: Union[str, Path], spectra: Spectra
-):
-
+def extract_chips(filename: Union[str, Path], outfolder: Union[str, Path], spectra: Spectra):
     if isinstance(outfolder, str):
         outfolder = Path(outfolder)
 
@@ -305,19 +297,16 @@ def extract_chips(
         # the tray info section if it exists should start after the last image
         # the section info and if there is a tray info section then it should be after the tray info section
         info_table_start = (
-            64
-            + (header.nchunks + 1) * 4
-            + chunk_offset_array[header.nchunks]
-            - chunk_offset_array[0]
+            64 + (header.nchunks + 1) * 4 + chunk_offset_array[header.nchunks] - chunk_offset_array[0]
         )
         file.seek(info_table_start)
 
-        tray: "list[TrayInfo]" = []
+        tray: "List[TrayInfo]" = []
         for i in range(header.ntrays):
             bytes = file.read(20)
             tray.append(TrayInfo(*struct.unpack(tray_info_format, bytes)))
 
-        section: "list[SectionInfo]" = []
+        section: "List[SectionInfo]" = []
         for i in range(header.nsections):
             bytes = file.read(28)
             section.append(SectionInfo(*struct.unpack(section_info_format, bytes)))
@@ -337,9 +326,7 @@ def extract_chips(
     # but such are the vagaries of ML
     # I totally assume that these headers always exist in the scalars
 
-    section_array = (
-        spectra.sampleheaders["L"].astype(int).values - 1
-    )  # subtract 1 so that we are 0 indexed
+    section_array = spectra.sampleheaders["L"].astype(int).values - 1  # subtract 1 so that we are 0 indexed
     sample_length = spectra.scalars["SecDist (mm)"].diff()
     # this is only na for the first sample
     idx_sample_na = (sample_length.isna()) | (sample_length < 0)
@@ -355,9 +342,7 @@ def extract_chips(
     nr: int
     pos_fill: NDArray[np.int32]
     idx_bin_fill: NDArray[np.bool8]
-    leading_bin: NDArray[np.uint8] = np.zeros(
-        (header.chunksize, header.ns, header.nb), dtype="uint8"
-    )
+    leading_bin: NDArray[np.uint8] = np.zeros((header.chunksize, header.ns, header.nb), dtype="uint8")
     total_offset: int
     chunksize_in_bytes: int
     np_image: NDArray[np.uint8]
@@ -382,15 +367,11 @@ def extract_chips(
             working[pos_fill] = leading_bin[pos_fill]
             curpos = pos_fill[-1] + 1
             # empty the leading bin
-            leading_bin = np.zeros(
-                (header.chunksize, header.ns, header.nb), dtype="uint8"
-            )
+            leading_bin = np.zeros((header.chunksize, header.ns, header.nb), dtype="uint8")
         # you need to monitor the processed lines to maintain this loop
         while (curchunk * header.chunksize - processed_lines) < sec.nlines:
             total_offset = chunk_offset_array[curchunk] + 4 * (header.nchunks + 1) + 64
-            chunksize_in_bytes = (
-                chunk_offset_array[curchunk + 1] - chunk_offset_array[curchunk]
-            )
+            chunksize_in_bytes = chunk_offset_array[curchunk + 1] - chunk_offset_array[curchunk]
             file.seek(total_offset)
             chunk = file.read(chunksize_in_bytes)
             np_image = decode_jpeg(chunk, colorspace="BGR")
@@ -430,7 +411,7 @@ def extract_chips(
             cursample += 1
 
 
-def _read_tsg_file(filename: Union[str, Path]) -> "list[str]":
+def _read_tsg_file(filename: Union[str, Path]) -> "List[str]":
     """Reads the files with the .tsg extension which are almost a toml file
     but not quite so the standard parser doesn't work
 
@@ -438,7 +419,7 @@ def _read_tsg_file(filename: Union[str, Path]) -> "list[str]":
     to simplify processing later on
 
     """
-    lines: list[str] = []
+    lines: List[str] = []
     tmp_line: str
     with open(filename, encoding="cp1252") as file:
         for line in file:
@@ -447,12 +428,12 @@ def _read_tsg_file(filename: Union[str, Path]) -> "list[str]":
     return lines
 
 
-def _find_header_sections(tsg_str: "list[str]"):
+def _find_header_sections(tsg_str: "List[str]"):
     """Finds the header sections of the .tsg file
     header sections are defined as strings between square brackets
     """
     re_strip: re.Pattern = re.compile("^\\[[a-zA-Z0-9 ]+\\]")
-    positions: "list[int]" = []
+    positions: "List[int]" = []
     for i, s in enumerate(tsg_str):
         if len(re_strip.findall(s)) > 0:
             positions.append(i)
@@ -461,8 +442,8 @@ def _find_header_sections(tsg_str: "list[str]"):
     # iterates over the last item
     positions.append(len(tsg_str))
     n_headers: int = len(positions)
-    sections: "dict[str, tuple[int,int]]" = {}
-    tmp_section: "tuple[int,int]"
+    sections: "Dict[str, Tuple[int,int]]" = {}
+    tmp_section: "Tuple[int,int]"
     tmp_name: str
     for i in range(n_headers - 1):
         tmp_section = (positions[i] + 1, positions[i + 1] - 1)
@@ -471,16 +452,14 @@ def _find_header_sections(tsg_str: "list[str]"):
     return sections
 
 
-def _parse_section(
-    section_list: "list[str]", key_split: str = ":"
-) -> "list[dict[str, str]]":
+def _parse_section(section_list: "List[str]", key_split: str = ":") -> "List[Dict[str, str]]":
     """
     machine id = 0
     ag.c3 = 0.000000
     8:Width2
     """
-    final: list[dict[str, str]] = []
-    kvp: dict[str, str]
+    final: List[Dict[str, str]] = []
+    kvp: Dict[str, str]
     for i in section_list:
         kvp = _parse_kvp(i, key_split)
         final.append(kvp)
@@ -488,17 +467,15 @@ def _parse_section(
     return final
 
 
-def _parse_sample_header(
-    section_list: "list[str]", key_split: str = ":"
-) -> "list[dict[str, str]]":
+def _parse_sample_header(section_list: "List[str]", key_split: str = ":") -> "List[Dict[str, str]]":
     """
     '0:ETG0187_0001_1  T=0001 L=1 P=1 D=1.000005 X=4.000000 H=ETG0187'
     '1:ETG0187_0001_2  T=0001 L=1 P=2 D=1.000006 X=12.000000 H=ETG0187'
     '2:ETG0187_0001_3  T=0001 L=1 P=3 D=1.000006 X=20.000000 H=ETG0187'
     """
-    final: list[dict[str, str]] = []
+    final: List[Dict[str, str]] = []
     key_0: str
-    tmp_sample: dict[str, str]
+    tmp_sample: Dict[str, str]
 
     for i in section_list:
         kk = _parse_kvp(i, key_split)
@@ -515,7 +492,7 @@ def _parse_sample_header(
     return final
 
 
-def _parse_class_section(section_list: "list[str]", classnumber: int) -> ClassHeaders:
+def _parse_class_section(section_list: "List[str]", classnumber: int) -> ClassHeaders:
     """
     name = S_jCLST_707 Groups
     max = 2
@@ -523,8 +500,8 @@ def _parse_class_section(section_list: "list[str]", classnumber: int) -> ClassHe
     0:SILICA
     1:K-FELDSPAR
     """
-    class_names: dict[str, str] = {}
-    class_info: dict[int, str] = {}
+    class_names: Dict[str, str] = {}
+    class_info: Dict[int, str] = {}
     c_name: str
     c_value: str
     for i in section_list:
@@ -542,9 +519,8 @@ def _parse_class_section(section_list: "list[str]", classnumber: int) -> ClassHe
     return class_header
 
 
-def _parse_wavelength_specs(line: str) -> "dict[str, Union[float,str]]":
-
-    split_wavelength: list[str] = line.split()
+def _parse_wavelength_specs(line: str) -> "Dict[str, Union[float,str]]":
+    split_wavelength: List[str] = line.split()
     wavelength = {
         "start": float(split_wavelength[0]),
         "end": float(split_wavelength[1]),
@@ -553,7 +529,7 @@ def _parse_wavelength_specs(line: str) -> "dict[str, Union[float,str]]":
     return wavelength
 
 
-def _parse_kvp(line: str, split: str = "=") -> "dict[str, str]":
+def _parse_kvp(line: str, split: str = "=") -> "Dict[str, str]":
     """Parses strings into Key value pairs
     control over the split value is to manage the different seperators used
     in different sections of the file
@@ -578,9 +554,7 @@ def _parse_kvp(line: str, split: str = "=") -> "dict[str, str]":
     return kvp
 
 
-def _read_bip(
-    filename: Union[str, Path], coordinates: "dict[str, str]"
-) -> NDArray[np.float32]:
+def _read_bip(filename: Union[str, Path], coordinates: "Dict[str, str]") -> NDArray[np.float32]:
     """Reads the .bip file as a 1d array then reshapes it according to the dimensions
     as supplied in the coordinates dict
 
@@ -604,15 +578,11 @@ def _read_bip(
     return spectrum
 
 
-def _calculate_wavelengths(
-    wavelength_specs: "dict[str,float]", coordinates: "dict[str, str]"
-) -> NDArray:
+def _calculate_wavelengths(wavelength_specs: "Dict[str,float]", coordinates: "Dict[str, str]") -> NDArray:
     wavelength_range: float = wavelength_specs["end"] - wavelength_specs["start"]
     resolution: float = wavelength_range / (int(coordinates["lastband"]) - 1)
 
-    return np.arange(
-        wavelength_specs["start"], wavelength_specs["end"] + resolution, resolution
-    )
+    return np.arange(wavelength_specs["start"], wavelength_specs["end"] + resolution, resolution)
 
 
 def read_hires_dat(filename: Union[str, Path]) -> NDArray:
@@ -631,15 +601,15 @@ def read_hires_dat(filename: Union[str, Path]) -> NDArray:
     return lidar
 
 
-def _parse_bandheaders(bandheaders: "list[str]") -> "list[BandHeaders]":
-    split_header = "list[str]"
+def _parse_bandheaders(bandheaders: "List[str]") -> "List[BandHeaders]":
+    split_header = "List[str]"
     band: int
     info: str
-    split_info: "list[str]"
+    split_info: "List[str]"
     name: str
     class_name: int
     flag: int
-    out: list[BandHeaders] = []
+    out: List[BandHeaders] = []
     for bh in bandheaders:
         split_header = bh.split(":")
         band = int(split_header[0])  # first item is the band number
@@ -663,11 +633,9 @@ def _parse_bandheaders(bandheaders: "list[str]") -> "list[BandHeaders]":
     return out
 
 
-def _parse_tsg(
-    fstr: "list[str]", headers: "dict[str, tuple[int,int]]"
-) -> "dict[str, Any]":
-    d_info: dict[str, Any] = {}
-    tmp_header: "list[dict[str, str]]" = []
+def _parse_tsg(fstr: "List[str]", headers: "Dict[str, Tuple[int,int]]") -> "Dict[str, Any]":
+    d_info: Dict[str, Any] = {}
+    tmp_header: "List[Dict[str, str]]" = []
     start: int
     end: int
 
@@ -694,7 +662,7 @@ def _parse_tsg(
                 d_info.update({"class": tmp_class})
 
         else:
-            tmp_out: dict[str, str] = {}
+            tmp_out: Dict[str, str] = {}
             for i in fstr[start:end]:
                 tmp = _parse_kvp(i)
                 if not tmp is None:
@@ -705,14 +673,13 @@ def _parse_tsg(
 
 
 def _parse_scalars(
-    scalars: NDArray, classes: "list[ClassHeaders]", bandheaders: "list[BandHeaders]"
+    scalars: NDArray, classes: "List[ClassHeaders]", bandheaders: "List[BandHeaders]"
 ) -> pd.DataFrame:
-
     """
     function to map the scalars to a pandas data frame with names and
     mapped values
     """
-    tmp_series: list[pd.DataFrame] = []
+    tmp_series: List[pd.DataFrame] = []
     for i in bandheaders:
         band_value = scalars[:, i.band]
         # handle flag 13 that has a path to plsscalars
@@ -730,9 +697,7 @@ def _parse_scalars(
     return output
 
 
-def read_tsg_bip_pair(
-    tsg_file: Union[Path, str], bip_file: Union[Path, str], spectrum: str
-) -> Spectra:
+def read_tsg_bip_pair(tsg_file: Union[Path, str], bip_file: Union[Path, str], spectrum: str) -> Spectra:
     fstr = _read_tsg_file(tsg_file)
     headers = _find_header_sections(fstr)
     info = _parse_tsg(fstr, headers)
@@ -753,7 +718,12 @@ def read_tsg_bip_pair(
     return package
 
 
-def read_package(foldername: Union[str, Path], read_cras_file: bool = False, extract_cras:bool=False, imageoutput:Union[str, None]=None) -> TSG:
+def read_package(
+    foldername: Union[str, Path],
+    read_cras_file: bool = False,
+    extract_cras: bool = False,
+    imageoutput: Union[str, None] = None,
+) -> TSG:
     # convert string to Path because we are wanting to use Pathlib objects to manage the folder structure
     if isinstance(foldername, str):
         foldername = Path(foldername)
@@ -819,7 +789,7 @@ def read_package(foldername: Union[str, Path], read_cras_file: bool = False, ext
     if file_pairs.valid_cras() and read_cras_file:
         if extract_cras:
             if imageoutput is None:
-                imageoutput = foldername.joinpath('IMG')
+                imageoutput = foldername.joinpath("IMG")
 
             if isinstance(imageoutput, str):
                 imageoutput = Path(imageoutput)
@@ -827,7 +797,7 @@ def read_package(foldername: Union[str, Path], read_cras_file: bool = False, ext
             if not imageoutput.exists():
                 imageoutput.mkdir()
 
-            extract_chips(file_pairs.cras,imageoutput, nir)
+            extract_chips(file_pairs.cras, imageoutput, nir)
             cras = Cras
         else:
             cras = read_cras(file_pairs.cras)

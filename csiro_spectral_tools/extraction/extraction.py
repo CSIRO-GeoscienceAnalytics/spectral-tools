@@ -391,7 +391,7 @@ def extract_spectral_features(
         fit_type (str, optional): 'cheb', 'raw', 'crude'. Defaults to 'cheb'.
         resolution (float, optional): if fit_type = 'cheb' this defines the desired resolution of the result.
                                         Defaults to 1.0.
-        ordinates_inspection_range (Optional[list[float, float]], optional): start and stop wavelengths over
+        ordinates_inspection_range (Optional[List[float, float]], optional): start and stop wavelengths over
                                         which to look. Defaults to None.
         prominence (Optional[float], optional):minimum prominence value to consider. Defaults to None.
         height (Optional[float], optional): minimum base to peak height to consider. Defaults to None.
@@ -448,7 +448,7 @@ def extract_spectral_features(
 
     def _extract_subset(
         spectral_data_in: NDArray, ordinates: NDArray, ordinates_inspection_range: Tuple[float, float]
-    ) -> tuple[NDArray, NDArray]:
+    ) -> Tuple[NDArray, NDArray]:
         # subset the data on wavelength if its called for
         range_index = np.searchsorted(ordinates, ordinates_inspection_range)
         ordinates_out = ordinates[range_index[0] : range_index[1] + 1]

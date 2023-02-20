@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Union
+from typing import List, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -11,10 +11,11 @@ from numpy.typing import NDArray
 class Spectra:
     ordinates: NDArray
     spectra: NDArray
-    sample_names: list[str]
+    sample_names: List[str]
 
-def _get_csv_data(csv_file: Union[Path, str], csv_order: int = 1) -> tuple[NDArray, NDArray, list[str]]:
-    names: list[str]
+
+def _get_csv_data(csv_file: Union[Path, str], csv_order: int = 1) -> Tuple[NDArray, NDArray, List[str]]:
+    names: List[str]
     spectra: NDArray
     ordinates: NDArray
 
@@ -33,13 +34,14 @@ def _get_csv_data(csv_file: Union[Path, str], csv_order: int = 1) -> tuple[NDArr
 
     return ordinates, spectra, names
 
+
 def read_csv(csv_file: Union[Path, str], csv_order: int = 1) -> Spectra:
-    """read_csv 
+    """read_csv
     Gather up wavelengths, spectral data and spectra names from a csv file. This is just a small wrapper
     around a pandas read_csv
 
     Args:
-        csv_file (Union[Path, str]):pathlib Path to csv file or string literal to file 
+        csv_file (Union[Path, str]):pathlib Path to csv file or string literal to file
         csv_order (int, optional): 1 = wavelength first column, 0 = wavelength first row. Defaults to 1.
 
     Returns:
@@ -57,4 +59,3 @@ def read_csv(csv_file: Union[Path, str], csv_order: int = 1) -> Spectra:
     csv_wavelengths, csv_spectra, sample_names = _get_csv_data(csv_file, csv_order)
     package = Spectra(csv_wavelengths, csv_spectra, sample_names)
     return package
-
