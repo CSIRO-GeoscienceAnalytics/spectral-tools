@@ -55,7 +55,7 @@ HAVE_CYTHON = False
 extensions = {}
 ext = ".pyx" if HAVE_CYTHON else ".c"
 
-extensions = [Extension("spectraltools.ext.chulls", ["spectraltools/ext/chulls" + ext])]
+extensions = [Extension("csiro_spectral_tools.ext.chulls", ["csiro_spectral_tools/ext/chulls" + ext])]
 
 if HAVE_CYTHON:
     # extensions = [Extension("spex.ext.chulls", ["spex/ext/chulls.pyx"])]
@@ -63,10 +63,10 @@ if HAVE_CYTHON:
     extensions = cythonize(extensions, compiler_directives=compiler_directives)
 
 setup(
-    name="spectraltools",
+    name="csiro-spectral-tools",
     version="0.1.67",
     packages=find_packages(),
-    package_data={"spectraltools": ["ext/*.pyd", "ext/*.so"]},
+    package_data={"csiro_spectral_tools": ["ext/*.pyd", "ext/*.so"]},
     include_package_data=True,
     url="",
     author="Andrew Rodger",

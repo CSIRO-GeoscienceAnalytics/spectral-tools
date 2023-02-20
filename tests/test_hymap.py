@@ -8,8 +8,8 @@ import pytest
 import spectral.io.envi as envi
 from scipy.interpolate import interp1d
 
-from spectraltools.extraction.extraction import extract_spectral_features
-from spectraltools.hulls.convexhulls import uc_hulls
+from csiro_spectral_tools.extraction.extraction import extract_spectral_features
+from csiro_spectral_tools.hulls.convexhulls import uc_hulls
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 test_data = Path(dir_path) / "../spectraltools/data"
