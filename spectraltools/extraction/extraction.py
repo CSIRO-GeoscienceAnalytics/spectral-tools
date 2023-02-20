@@ -323,37 +323,36 @@ def _process_signal(
         height = 0.0
 
     # see how the user wants to get the features. Will add more as time goes on
-    match fit_type:
-        case "cheb":
-            return_values = _chebyshev_fit(
-                signal,
-                ordinates,
-                max_features,
-                height,
-                threshold,
-                distance,
-                prominence,
-                width,
-                wlen,
-                resolution,
-            )
-        case "raw":
-            return_values = _raw_fit(
-                signal, ordinates, max_features, height, threshold, distance, prominence, width, wlen
-            )
-        case _:
-            return_values = _chebyshev_fit(
-                signal,
-                ordinates,
-                max_features,
-                height,
-                threshold,
-                distance,
-                prominence,
-                width,
-                wlen,
-                resolution,
-            )
+    if fit_type == "cheb":
+        return_values = _chebyshev_fit(
+            signal,
+            ordinates,
+            max_features,
+            height,
+            threshold,
+            distance,
+            prominence,
+            width,
+            wlen,
+            resolution,
+        )
+    elif fit_type == "raw":
+        return_values = _raw_fit(
+            signal, ordinates, max_features, height, threshold, distance, prominence, width, wlen
+        )
+    else:
+        return_values = _chebyshev_fit(
+            signal,
+            ordinates,
+            max_features,
+            height,
+            threshold,
+            distance,
+            prominence,
+            width,
+            wlen,
+            resolution,
+        )
 
     return return_values
 
@@ -571,16 +570,15 @@ def extract_spectral_features(
                         for signal in spectral_array
                     ]
 
-        match spectral_array.ndim:
-            case 1:
-                feature_info = np.asarray(feature_info)
-            case 2:
-                feature_info = np.asarray(feature_info)
-            case 3:
-                feature_info = np.reshape(
-                    np.asarray(feature_info),
-                    (spectral_array.shape[0], spectral_array.shape[1], 9, max_features),
-                )
+        if spectral_array.ndim == 1:
+            feature_info = np.asarray(feature_info)
+        elif spectral_array.ndim == 2:
+            feature_info = np.asarray(feature_info)
+        elif spectral_array.ndim == 3:
+            feature_info = np.reshape(
+                np.asarray(feature_info),
+                (spectral_array.shape[0], spectral_array.shape[1], 9, max_features),
+            )
         package = Features(
             feature_info,
             max_features,
