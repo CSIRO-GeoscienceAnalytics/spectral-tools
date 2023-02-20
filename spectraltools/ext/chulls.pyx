@@ -1,6 +1,7 @@
 import cython
 from cython.parallel import prange, parallel
 from numpy import empty, double
+from numpy.typing import NDArray
 from multiprocessing import cpu_count
 cdef int NUM_THREADS = cpu_count()
 
@@ -91,9 +92,9 @@ cdef void extract_hull_2d(double [:, :, :] spectrum, double[:, :, :] absorption,
         for iidx in prange(nx, schedule='dynamic'):
             for jidx in range(ny):
                 extract_subhull(spectrum[iidx, jidx], absorption[iidx, jidx], wavelengths, 0, nwvl, hull_type)
-                
 
-def get_absorption(wavelengths, spectra, hull_type):
+
+def get_absorption(wavelengths: NDArray, spectra: NDArray, hull_type: int):
     """
     Modified: Andrew Rodger, CSIRO Mineral Resources (15/02/2020)
 
@@ -115,8 +116,8 @@ def get_absorption(wavelengths, spectra, hull_type):
 
     """
     # make the arrays doubles
-    spectra = double(spectra)
-    wavelengths = double(wavelengths)
+    spectra = spectra.astype(double)
+    wavelengths = wavelengths.astype(double)
 
     # Allocate some memory for absorptions
     absorption = empty(shape=spectra.shape)

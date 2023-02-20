@@ -13,7 +13,8 @@ from scipy.interpolate import interp1d
 from scipy.signal import find_peaks
 from spectraltools.hulls.convexhulls import uc_hulls
 
-warnings.simplefilter('ignore', np.RankWarning)  # stop polyfit rankwarnings
+warnings.simplefilter("ignore", np.RankWarning)  # stop polyfit rankwarnings
+
 
 @dataclass
 class Features:
@@ -21,6 +22,7 @@ class Features:
     The Features class is the output from running spectraltools.extraction.extract_spectral_features
     Besides the actual features found it contains all the options that were used to run the extraction.
     """
+
     extracted_features: NDArray
     max_features: int
     do_hull: bool
@@ -28,7 +30,7 @@ class Features:
     invert: bool
     fit_type: str
     resolution: float
-    ordinates_inspection_range:  list[float, float]
+    ordinates_inspection_range: list[float, float]
     prominence: float
     height: float
     threshold: float
@@ -37,7 +39,19 @@ class Features:
     wlen: float
 
 
-def _mp_leadin(spectral_array: NDArray, ordinates: NDArray, distance: int, max_features: int, prominence: float, height: float, threshold: float, width: int, wlen: float, fit_type: str, resolution: float) -> list:
+def _mp_leadin(
+    spectral_array: NDArray,
+    ordinates: NDArray,
+    distance: int,
+    max_features: int,
+    prominence: float,
+    height: float,
+    threshold: float,
+    width: int,
+    wlen: float,
+    fit_type: str,
+    resolution: float,
+) -> list:
     """_mp_leadin
     This method preps the incoming data so it can be run with your laptop/pc multiprocessing.
     To do this requires the main code is run in a main guard. If its not and you say it is then expect havoc to ensue.
@@ -61,8 +75,22 @@ def _mp_leadin(spectral_array: NDArray, ordinates: NDArray, distance: int, max_f
 
     chunks = mp.cpu_count()
     sub_arrays = np.array_split(spectral_array, chunks)
-    inputs = [(subarray, ordinates, distance, max_features, prominence, height, threshold, width, wlen, fit_type, resolution) for subarray in
-            sub_arrays]
+    inputs = [
+        (
+            subarray,
+            ordinates,
+            distance,
+            max_features,
+            prominence,
+            height,
+            threshold,
+            width,
+            wlen,
+            fit_type,
+            resolution,
+        )
+        for subarray in sub_arrays
+    ]
     pool = mp.Pool(chunks)
     pool_output = pool.starmap(_mp_process_data, inputs)  # Returns a list of lists
     pool.close()
@@ -70,9 +98,22 @@ def _mp_leadin(spectral_array: NDArray, ordinates: NDArray, distance: int, max_f
     return [entry for val in pool_output for entry in val]
 
 
-def _mp_process_data(spectral_array, ordinates, distance, max_features, prominence, height, threshold, width, wlen, fit_type, resolution)-> list:
+def _mp_process_data(
+    spectral_array,
+    ordinates,
+    distance,
+    max_features,
+    prominence,
+    height,
+    threshold,
+    width,
+    wlen,
+    fit_type,
+    resolution,
+) -> list:
     """
-    Used for multiprocessing of image files (since they are usually large). Allows for large speed ups in processing
+    Used for multiprocessing of image files (since they are usually large).
+                Allows for large speed ups in processing
 
     Args:
         spectral_array (NDArray): 2D [N, #bands] or 3D [N, M, #bands]
@@ -84,31 +125,65 @@ def _mp_process_data(spectral_array, ordinates, distance, max_features, prominen
         threshold (float): unused
         width (int): minimum width in bands to consider
         wlen (float): buffer around peaks for defining a feature. This can do weird stuff. I leave it as None
-        fit_type (str): 'cheb' or 'raw': default is 'cheb'. Produces smoothing in noisy spectra and lets you define the output resolution
+        fit_type (str): 'cheb' or 'raw': default is 'cheb'. Produces smoothing in noisy spectra and lets you
+                define the output resolution
         resolution (float): desired output resolution
 
     Returns: the calculated feature information
 
     """
-    #feature_info = []
+    # feature_info = []
     if spectral_array.ndim == 2:
-        feature_info = [_process_signal(spectrum, ordinates, distance=distance,
-                                                    max_features=max_features, prominence=prominence,
-                                                    height=height, threshold=threshold,
-                                                    width=width, wlen=wlen, fit_type=fit_type, resolution=resolution)
-                                                    for spectrum in spectral_array]
+        feature_info = [
+            _process_signal(
+                spectrum,
+                ordinates,
+                distance=distance,
+                max_features=max_features,
+                prominence=prominence,
+                height=height,
+                threshold=threshold,
+                width=width,
+                wlen=wlen,
+                fit_type=fit_type,
+                resolution=resolution,
+            )
+            for spectrum in spectral_array
+        ]
     if spectral_array.ndim == 3:
-        feature_info = [_process_signal(spectrum, ordinates, distance=distance, max_features=max_features,
-                                        prominence=prominence,
-                                        height=height, threshold=threshold,
-                                        width=width, wlen=wlen, fit_type=fit_type, resolution=resolution)
-                                        for row in spectral_array for spectrum in row]
+        feature_info = [
+            _process_signal(
+                spectrum,
+                ordinates,
+                distance=distance,
+                max_features=max_features,
+                prominence=prominence,
+                height=height,
+                threshold=threshold,
+                width=width,
+                wlen=wlen,
+                fit_type=fit_type,
+                resolution=resolution,
+            )
+            for row in spectral_array
+            for spectrum in row
+        ]
     return feature_info
 
 
-def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, height: float = None, threshold: float = None,
-                        distance: int = None, prominence: float = None, width: float = None, wlen: float = None,
-                        fit_type: str = 'cheb', resolution: float = None):
+def _process_signal(
+    signal: NDArray,
+    ordinates: NDArray,
+    max_features: int = 4,
+    height: float = None,
+    threshold: float = None,
+    distance: int = None,
+    prominence: float = None,
+    width: float = None,
+    wlen: float = None,
+    fit_type: str = "cheb",
+    resolution: float = None,
+):
     """_process_signal _summary_
 
     Args:
@@ -121,18 +196,19 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
         threshold (float): unused
         width (int): minimum width in bands to consider
         wlen (float): buffer around peaks for defining a feature. This can do weird stuff. I leave it as None
-        fit_type (str): 'cheb' or 'raw': default is 'cheb'. Produces smoothing in noisy spectra and lets you define the output resolution
+        fit_type (str): 'cheb' or 'raw': default is 'cheb'. Produces smoothing in noisy spectra and lets you
+                      define the output resolution
         resolution (float): desired output resolution
 
     """
+
     def _remove_excess_features(max_features, peaks, peaks_properties, indices, ordinates):
-        """_remove_excess_features
-        """
+        """_remove_excess_features"""
         if len(indices) >= max_features:
             indices = indices[:max_features]
         peaks = peaks[indices]
 
-        #reduce and reorder the properties
+        # reduce and reorder the properties
         for key in peaks_properties:
             peaks_properties[key] = peaks_properties[key][indices]
 
@@ -140,20 +216,24 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
 
         return peak_ordinates, peaks_properties
 
-
     def _padout_features(max_features, peaks_properties, peak_ordinates):
         ordinates_size = peak_ordinates.size
         if ordinates_size < max_features:
-            peak_ordinates = np.pad(peak_ordinates, (0, max_features - ordinates_size), 'constant')
+            peak_ordinates = np.pad(peak_ordinates, (0, max_features - ordinates_size), "constant")
             for key in peaks_properties:
-                peaks_properties[key] = np.append(peaks_properties[key], np.zeros(max_features - ordinates_size))
+                peaks_properties[key] = np.append(
+                    peaks_properties[key], np.zeros(max_features - ordinates_size)
+                )
         return peak_ordinates, peaks_properties
 
-
     def _create_final_return_values(ordinates, peaks_properties, peak_ordinates):
-
         xp = np.arange(ordinates.shape[0])
-        values_in = [peaks_properties['left_ips'], peaks_properties['right_ips'], peaks_properties['left_bases'], peaks_properties['right_bases']]
+        values_in = [
+            peaks_properties["left_ips"],
+            peaks_properties["right_ips"],
+            peaks_properties["left_bases"],
+            peaks_properties["right_bases"],
+        ]
 
         values_out = np.interp(values_in, xp, ordinates)
         widths = values_out[1] - values_out[0]
@@ -161,14 +241,26 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
         indx = widths > 0
         asymmetry = np.zeros(values_out[0].shape)
         asymmetry[indx] = 2 * (
-                (values_out[1][indx] - np.array(peak_ordinates)[indx]) / (values_out[1][indx] - values_out[0][indx]) - 0.5)
+            (values_out[1][indx] - np.array(peak_ordinates)[indx])
+            / (values_out[1][indx] - values_out[0][indx])
+            - 0.5
+        )
 
-        return np.asarray(peak_ordinates), peaks_properties['prominences'], widths, asymmetry, \
-                        peaks_properties['peak_heights'], values_out[2], values_out[3], values_out[0], values_out[1]
+        return (
+            np.asarray(peak_ordinates),
+            peaks_properties["prominences"],
+            widths,
+            asymmetry,
+            peaks_properties["peak_heights"],
+            values_out[2],
+            values_out[3],
+            values_out[0],
+            values_out[1],
+        )
 
-
-    def _chebyshev_fit(signal, ordinates, max_features, height, threshold, distance, prominence, width, wlen, resolution):
-
+    def _chebyshev_fit(
+        signal, ordinates, max_features, height, threshold, distance, prominence, width, wlen, resolution
+    ):
         # set a distance if it hasnt already
         if distance is None:
             distance = 2
@@ -185,7 +277,7 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
 
         # fit and interpolate
         chubby = cheb.fit(ordinates, signal, cheb_deg)
-        interp_function = interp1d(ordinates, chubby(ordinates), kind='cubic', fill_value='extrapolate')
+        interp_function = interp1d(ordinates, chubby(ordinates), kind="cubic", fill_value="extrapolate")
         o = np.linspace(ordinates[0], ordinates[-1], resolution_multiplier)
         s = interp_function(o)
         end_buffer = distance
@@ -197,25 +289,32 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
         # get the peaks and associated data
         return _raw_fit(s, o, max_features, height, threshold, distance, prominence, width, wlen)
 
-
     def _raw_fit(signal, ordinates, max_features, height, threshold, distance, prominence, width, wlen):
-
         # get the indicies for the peaks. If the width isn't set to 0 (or some other value) it wont return peaks_properties
-        peaks, peaks_properties = find_peaks(signal, height=height, threshold=threshold, distance=distance,
-                                            prominence=prominence, width=width, wlen=wlen, rel_height=0.5)
+        peaks, peaks_properties = find_peaks(
+            signal,
+            height=height,
+            threshold=threshold,
+            distance=distance,
+            prominence=prominence,
+            width=width,
+            wlen=wlen,
+            rel_height=0.5,
+        )
 
         # sort from deepest to smallest
-        indices = np.flip(np.argsort(peaks_properties['prominences']))
+        indices = np.flip(np.argsort(peaks_properties["prominences"]))
 
         # reorder and get rid of additional unwanted features
-        peak_ordinates, peaks_properties = _remove_excess_features(max_features, peaks, peaks_properties, indices, ordinates)
+        peak_ordinates, peaks_properties = _remove_excess_features(
+            max_features, peaks, peaks_properties, indices, ordinates
+        )
 
         # pad out the results if needed to suit the users number of features request
         peak_ordinates, peaks_properties = _padout_features(max_features, peaks_properties, peak_ordinates)
 
         # Interpolate the left and right locations of the FWHM to wavelength space
         return _create_final_return_values(ordinates, peaks_properties, peak_ordinates)
-
 
     # set the width and height if it hasnt been already
     if width is None:
@@ -225,21 +324,58 @@ def _process_signal(signal: NDArray, ordinates: NDArray, max_features: int = 4, 
 
     # see how the user wants to get the features. Will add more as time goes on
     match fit_type:
-        case 'cheb':
-            return_values = _chebyshev_fit(signal, ordinates, max_features, height, threshold, distance, prominence, width, wlen, resolution)
-        case 'raw':
-            return_values = _raw_fit(signal, ordinates, max_features, height, threshold, distance, prominence, width, wlen)
+        case "cheb":
+            return_values = _chebyshev_fit(
+                signal,
+                ordinates,
+                max_features,
+                height,
+                threshold,
+                distance,
+                prominence,
+                width,
+                wlen,
+                resolution,
+            )
+        case "raw":
+            return_values = _raw_fit(
+                signal, ordinates, max_features, height, threshold, distance, prominence, width, wlen
+            )
         case _:
-            return_values = _chebyshev_fit(signal, ordinates, max_features, height, threshold, distance, prominence, width, wlen, resolution)
+            return_values = _chebyshev_fit(
+                signal,
+                ordinates,
+                max_features,
+                height,
+                threshold,
+                distance,
+                prominence,
+                width,
+                wlen,
+                resolution,
+            )
 
     return return_values
 
 
-def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_features: int = 4,
-    do_hull: bool = False, hull_type: int = 0, invert: bool = False, main_guard: bool = False,
-    fit_type: str = 'cheb', resolution: float = 1.0, ordinates_inspection_range:  Optional[list[float, float]] = None,
-    prominence: Optional[float] = None, height: Optional[float] = None, threshold: Optional[float] = None,
-    distance: Optional[int] = None, width: Optional[float] = None, wlen: Optional[float] = None) -> Features:
+def extract_spectral_features(
+    instrument_data: NDArray,
+    ordinates: NDArray,
+    max_features: int = 4,
+    do_hull: bool = False,
+    hull_type: int = 0,
+    invert: bool = False,
+    main_guard: bool = False,
+    fit_type: str = "cheb",
+    resolution: float = 1.0,
+    ordinates_inspection_range: Optional[list[float, float]] = None,
+    prominence: Optional[float] = None,
+    height: Optional[float] = None,
+    threshold: Optional[float] = None,
+    distance: Optional[int] = None,
+    width: Optional[float] = None,
+    wlen: Optional[float] = None,
+) -> Features:
     """extract_spectral_features
     This routine will extract spectral features from the input spectral data.
 
@@ -247,19 +383,24 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
         instrument_data (NDArray): incoming spectral data array 1D, 2D [N, Bands], 3D [Row, Col, Bands]
         ordinates (NDArray): ordinates corresponding to the spectral array [Bands]
         max_features (int, optional): Maximum number of features to look for. Defaults to 4.
-        do_hull (bool, optional): Apply a hull correction prior to looking for features. Need to do this with refrlectance. Defaults to False.
+        do_hull (bool, optional): Apply a hull correction prior to looking for features. Need to do this with
+                                        reflectance. Defaults to False.
         hull_type (int, optional): 0 - hull quotient, 1 - hull removal, 2 - return hull. Defaults to 0.
         invert (bool, optional): Invert the incoming spectra. Defaults to False.
         main_guard (bool, optional): If run in a main guard makes use of mutliproccessing. Defaults to False.
         fit_type (str, optional): 'cheb', 'raw', 'crude'. Defaults to 'cheb'.
-        resolution (float, optional): if fit_type = 'cheb' this defines the desired resolution of the result. Defaults to 1.0.
-        ordinates_inspection_range (Optional[list[float, float]], optional): start and stop wavelengths over which to look. Defaults to None.
+        resolution (float, optional): if fit_type = 'cheb' this defines the desired resolution of the result.
+                                        Defaults to 1.0.
+        ordinates_inspection_range (Optional[list[float, float]], optional): start and stop wavelengths over
+                                        which to look. Defaults to None.
         prominence (Optional[float], optional):minimum prominence value to consider. Defaults to None.
         height (Optional[float], optional): minimum base to peak height to consider. Defaults to None.
         threshold (Optional[float], optional): nothing at the moment. Not implemented. Defaults to None.
-        distance (Optional[int], optional): minimum distance in bands that features are allowed to exist together. Defaults to None.
+        distance (Optional[int], optional): minimum distance in bands that features are allowed to exist
+                                        together. Defaults to None.
         width (Optional[float], optional): minimum width to consider. Defaults to None.
-        wlen (Optional[float], optional): minimum distance around a feature to use (setting this can cause issues). Defaults to None.
+        wlen (Optional[float], optional): minimum distance around a feature to use
+                                        (setting this can cause issues). Defaults to None.
 
     Returns:
         Features: a class containing various input selections and of course the features found
@@ -289,14 +430,14 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
         8: Wavelength location of the right hand side of the FWHM
     """
 
-
     def _crude_fit(signal_array, ordinates):
-
-        depths = signal_array[..., :].max(axis=(signal_array.ndim-1))
-        waves =  ordinates[signal_array[..., :].argmax(axis=(signal_array.ndim-1))]
+        depths = signal_array[..., :].max(axis=(signal_array.ndim - 1))
+        waves = ordinates[signal_array[..., :].argmax(axis=(signal_array.ndim - 1))]
         return depths, waves
 
-    def _hulls_if_required(ordinates_in: NDArray, spectral_array: NDArray, do_hull: bool = False, hull_type: int = 0) -> NDArray:
+    def _hulls_if_required(
+        ordinates_in: NDArray, spectral_array: NDArray, do_hull: bool = False, hull_type: int = 0
+    ) -> NDArray:
         # run a hull process if required
         if do_hull:
             spectral_array = uc_hulls(ordinates_in, spectral_array, hull_type=hull_type)
@@ -305,22 +446,22 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
             spectral_array = uc_hulls(ordinates_in, 1.0 - spectral_array, hull_type=1)
         return spectral_array
 
-
-    def _extract_subset(spectral_data_in: NDArray, ordinates: NDArray, ordinates_inspection_range: list[float, float]) -> tuple[NDArray, NDArray]:
+    def _extract_subset(
+        spectral_data_in: NDArray, ordinates: NDArray, ordinates_inspection_range: list[float, float]
+    ) -> tuple[NDArray, NDArray]:
         # subset the data on wavelength if its called for
         range_index = np.searchsorted(ordinates, ordinates_inspection_range)
-        ordinates_out = ordinates[range_index[0]:range_index[1] + 1]
+        ordinates_out = ordinates[range_index[0] : range_index[1] + 1]
         if spectral_data_in.ndim == 1:
-            spectral_array = spectral_data_in[range_index[0]:range_index[1] + 1]
+            spectral_array = spectral_data_in[range_index[0] : range_index[1] + 1]
         elif spectral_data_in.ndim == 2:
-            spectral_array = spectral_data_in[:, range_index[0]:range_index[1] + 1]
+            spectral_array = spectral_data_in[:, range_index[0] : range_index[1] + 1]
         elif spectral_data_in.ndim == 3:
-            spectral_array = spectral_data_in[:, :, range_index[0]:range_index[1] + 1]
+            spectral_array = spectral_data_in[:, :, range_index[0] : range_index[1] + 1]
         else:
             return -99
         spectral_array[spectral_array < 0] = 0
-        return ordinates_out,spectral_array
-
+        return ordinates_out, spectral_array
 
     def _generator(spectral_array: NDArray) -> NDArray:
         """
@@ -345,7 +486,6 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
         else:
             return np.zeros([1])
 
-
     feature_info = []
     # subset the spectral data if called for
     ordinates_in, spectral_array = _extract_subset(instrument_data, ordinates, ordinates_inspection_range)
@@ -360,31 +500,76 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
     # do a hull correction if called for
     spectral_array = _hulls_if_required(ordinates_in, spectral_array, do_hull=do_hull, hull_type=hull_type)
 
-    if fit_type != 'crude':
+    if fit_type != "crude":
         if spectral_array.ndim == 1:
             # This could be run in multiprocessing. I(N FACT THIS IS PROBS WRONG IF ITS A SINGLE SPECTRUM!!)
             for signal in _generator(spectral_array):
                 # return the peaks_ordinates, prominences and widths
                 feature_info.append(
-                    _process_signal(signal, ordinates_in, distance=distance, max_features=max_features,
-                                            prominence=prominence, height=height, threshold=threshold,
-                                            width=width, wlen=wlen, fit_type=fit_type, resolution=resolution))
+                    _process_signal(
+                        signal,
+                        ordinates_in,
+                        distance=distance,
+                        max_features=max_features,
+                        prominence=prominence,
+                        height=height,
+                        threshold=threshold,
+                        width=width,
+                        wlen=wlen,
+                        fit_type=fit_type,
+                        resolution=resolution,
+                    )
+                )
         else:  # multiprocessing
             if main_guard:
-                feature_info = _mp_leadin(spectral_array, ordinates_in, distance, max_features, prominence,
-                                            height, threshold, width, wlen, fit_type, resolution)
+                feature_info = _mp_leadin(
+                    spectral_array,
+                    ordinates_in,
+                    distance,
+                    max_features,
+                    prominence,
+                    height,
+                    threshold,
+                    width,
+                    wlen,
+                    fit_type,
+                    resolution,
+                )
             else:
                 if spectral_array.ndim == 3:
-                    feature_info = [_process_signal(signal, ordinates_in, distance=distance,
-                                                        max_features=max_features, prominence=prominence,
-                                                        height=height, threshold=threshold,
-                                                        width=width, wlen=wlen, resolution=resolution) for row in spectral_array for signal in row]
+                    feature_info = [
+                        _process_signal(
+                            signal,
+                            ordinates_in,
+                            distance=distance,
+                            max_features=max_features,
+                            prominence=prominence,
+                            height=height,
+                            threshold=threshold,
+                            width=width,
+                            wlen=wlen,
+                            resolution=resolution,
+                        )
+                        for row in spectral_array
+                        for signal in row
+                    ]
 
                 if spectral_array.ndim == 2:
-                    feature_info = [_process_signal(signal, ordinates_in, distance=distance,
-                                                    max_features=max_features, prominence=prominence,
-                                                    height=height, threshold=threshold,
-                                                    width=width, wlen=wlen, resolution=resolution) for signal in spectral_array]
+                    feature_info = [
+                        _process_signal(
+                            signal,
+                            ordinates_in,
+                            distance=distance,
+                            max_features=max_features,
+                            prominence=prominence,
+                            height=height,
+                            threshold=threshold,
+                            width=width,
+                            wlen=wlen,
+                            resolution=resolution,
+                        )
+                        for signal in spectral_array
+                    ]
 
         match spectral_array.ndim:
             case 1:
@@ -392,15 +577,44 @@ def extract_spectral_features(instrument_data: NDArray, ordinates: NDArray, max_
             case 2:
                 feature_info = np.asarray(feature_info)
             case 3:
-                feature_info = np.reshape(np.asarray(feature_info),
-                                        (spectral_array.shape[0], spectral_array.shape[1], 9, max_features))
-        package = Features(feature_info, max_features, do_hull, hull_type, invert,
-        fit_type, resolution, ordinates_inspection_range, prominence, height, threshold, distance, width, wlen)
+                feature_info = np.reshape(
+                    np.asarray(feature_info),
+                    (spectral_array.shape[0], spectral_array.shape[1], 9, max_features),
+                )
+        package = Features(
+            feature_info,
+            max_features,
+            do_hull,
+            hull_type,
+            invert,
+            fit_type,
+            resolution,
+            ordinates_inspection_range,
+            prominence,
+            height,
+            threshold,
+            distance,
+            width,
+            wlen,
+        )
     else:
         depths, waves = _crude_fit(spectral_array, ordinates_in)
         feature_info = np.stack([waves, depths], axis=-1)
-        package = Features(feature_info, 1, do_hull, hull_type, invert, fit_type, resolution, ordinates_inspection_range, prominence, height,
-        threshold, distance, width, wlen)
-
+        package = Features(
+            feature_info,
+            1,
+            do_hull,
+            hull_type,
+            invert,
+            fit_type,
+            resolution,
+            ordinates_inspection_range,
+            prominence,
+            height,
+            threshold,
+            distance,
+            width,
+            wlen,
+        )
 
     return package

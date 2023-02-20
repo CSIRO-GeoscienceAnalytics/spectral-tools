@@ -1,4 +1,3 @@
-
 # spectraltools
 
 A very small collection of tools for working with spectral data. Documentation for the various modules can be
@@ -6,16 +5,16 @@ found in the docs folder. I used to have a class for parsing TSG data but after 
 
 I used to have spectral unmixing routines in here as well but have removed them as they were really a bit (read a LOT) adhoc. They may come back in the future.
 
-There is some documentation that I created with Sphinx but alas I am not that adept at Sphink. Regardless it can be found in the docs folder
+There is some documentation that I created with Sphinx but alas I am not that adept at Sphinx. Regardless it can be found in the docs folder
 
 ## Pre Installation Requirements (only if you need to build the extension file for doing convex hulls)
 
-1) setuptools >= 18.0
-2) Cython
+1. setuptools >= 18.0
+2. Cython
 
-    In regard to cython you will probably need to ensure you have a compatible C
-    compiler for your OS. Probably best to take a look at the [Cython documentation](https://cython.readthedocs.io/en/latest/index.html)
-    to see what is required there. Who knows you may already have one installed.
+   In regard to cython you will probably need to ensure you have a compatible C
+   compiler for your OS. Probably best to take a look at the [Cython documentation](https://cython.readthedocs.io/en/latest/index.html)
+   to see what is required there. Who knows you may already have one installed.
 
 ## Installation (assumimg you are not building the Cython extension and are simply using the prebuilt .c and .pyx files)
 
@@ -30,30 +29,30 @@ It does have a precompiled cython file in the spectraltools/ext folder for perfo
 
 I have tried various python only implementations of hull correction routines but haven't found them to be fast enough. I probably need to look closer at `qhull`. With that said their is python only hulls routine in the package.
 
-Additionaly, if you want to run the feature extraction method then you need to run your routine in a main guard. If you dont then it will not allow you to use the
-multiprocessor component. This initself is not a bad thing and for small datasets (<20000 spectra I guess) it probably isnt needed anyway. If you are extracting features from spectral imagery however then not using the main guard and the main_guard=True keyword in spectraltools.extraction.extraction.extract_spectral_features will run noticeably slower due to the large number of samples.
+Additionally, if you want to run the feature extraction method then you need to run your routine in a main guard. If you don't then it will not allow you to use the
+multiprocessor component. This initself is not a bad thing and for small datasets (<20000 spectra I guess) it probably isn't needed anyway. If you are extracting features from spectral imagery however then not using the main guard and the main_guard=True keyword in spectraltools.extraction.extraction.extract_spectral_features will run noticeably slower due to the large number of samples.
 
 ## Whats in the spectraltools package?
 
 It is comprised of a number of sub-packages.
 
-1) ext (package): A Cython implementation for convex hulls.
+1. ext (package): A Cython implementation for convex hulls.
 
-    The main file is the chulls.pyx file from which the chulls.c and chulls*.pyd is generated. A setup file to regenerate the c and pyd files is also in there.
-    You can directly call the chulls.get_absorption method but its better to use the spectraltools.hulls.convexhulls.uc_hulls method instead. This is a wrapper for the     chulls one and as such has type hinting etc.
+   The main file is the chulls.pyx file from which the chulls.c and chulls\*.pyd is generated. A setup file to regenerate the c and pyd files is also in there.
+   You can directly call the chulls.get_absorption method but its better to use the spectraltools.hulls.convexhulls.uc_hulls method instead. This is a wrapper for the chulls one and as such has type hinting etc.
 
-2) extraction (package): A module for extracting spectral feature information from spectra
+2. extraction (package): A module for extracting spectral feature information from spectra
 
-    from spectraltools.extraction.extraction import extract_spectral_features
+   from spectraltools.extraction.extraction import extract_spectral_features
 
-3) io (package): An module with a bunch of convenience spectral data parsers. The parse_numpy one is probably a bit dumb but whatever.
+3. io (package): An module with a bunch of convenience spectral data parsers. The parse_numpy one is probably a bit dumb but whatever.
 
-    from spectraltools.io import parse_tsg, parse_envi, parse_csv, parse_numpy
+   from spectraltools.io import parse_tsg, parse_envi, parse_csv, parse_numpy
 
-4) python_hulls (package): A pure python implementation of convex hulls (phulls) and a warpper for the cython extension when you really need speed.
+4. python_hulls (package): A pure python implementation of convex hulls (phulls) and a warpper for the cython extension when you really need speed.
 
-    from spectraltools.hulls.phull import get_absorption
+   from spectraltools.hulls.phull import get_absorption
 
-    or,
+   or,
 
-    from spectraltools.hulls.convexhulls import get_absorption
+   from spectraltools.hulls.convexhulls import get_absorption

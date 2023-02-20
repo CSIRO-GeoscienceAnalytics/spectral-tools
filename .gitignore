@@ -401,3 +401,11 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+
+tests/output/
+*.egg-info/
+.eggs/
+dist/
+build/
+.vscode/

@@ -1,6 +1,6 @@
 """
 Takes a spectral array and its ordinates and calculates a hull solution.
-This is a warpper to the extension chulls in spectraltools.ext.chulls
+This is a wrapper to the extension chulls in spectraltools.ext.chulls
 
 Returns:
     NDArray: hull quotient or hull removed or hull
@@ -9,7 +9,8 @@ from numpy.typing import NDArray
 
 from spectraltools.ext import chulls
 
-def uc_hulls(ordinates: NDArray, data: NDArray, hull_type: int=0) -> NDArray:
+
+def uc_hulls(ordinates: NDArray, data: NDArray, hull_type: int = 0) -> NDArray:
     """uc_hulls Calculate either a hull quotient, hull removal or hull
 
     Args:
