@@ -169,7 +169,7 @@ jobs:
         path: dist/
 
   upload:
-    needs: [build-linux, build-windows]
+    needs: [build-linux-cp38, build-linux-cp39, build-linux-cp310, build-windows]
     runs-on: ubuntu-latest
 
     steps:
