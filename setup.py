@@ -12,6 +12,9 @@ class build_py(_build_py):
         return super().run()
 
 
+with open("README.md") as f:
+    readme = f.read()
+
 try:
     pkg_resources.require("setuptools >= 18.0")
 except pkg_resources.ResolutionError:
@@ -68,10 +71,11 @@ setup(
     packages=find_packages(),
     package_data={"csiro_spectral_tools": ["ext/*.pyd", "ext/*.so"]},
     include_package_data=True,
-    url="",
+    url="https://github.com/CSIRO-GeoscienceAnalytics/spectral-tools",
     author="Andrew Rodger",
     license="MIT",
-    description="A collection of tools that I have used for working with hyperspectral data",
+    description="A collection of tools used for working with hyperspectral data",
+    long_description=readme,
     install_requires=["numpy", "spectral", "pandas", "scipy", "scikit-learn"],
     python_requires=">=3.8",
     setup_requires=["numpy", "wheel"],
