@@ -133,11 +133,8 @@ jobs:
       run: |
         echo $PYPI_RC > ~/.pypirc
 
-    - name: Upload with twine
-      env:
-        TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
-      run: |
-        ls -l dist/*
-        pip install twine
-        twine upload --repository testpypi dist/*
+    - name: Publish package to TestPyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        password: ${{ secrets.PYPI_TEST_TOKEN }}
+        repository_url: https://test.pypi.org/legacy/

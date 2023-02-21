@@ -409,3 +409,4 @@ tests/output/
 dist/
 build/
 .vscode/
+tests/*.ipynb
