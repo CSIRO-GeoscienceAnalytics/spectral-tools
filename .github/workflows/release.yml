@@ -7,7 +7,7 @@ on:
 
 jobs:
 
-   build-linux-cp38:
+  build-linux-cp38:
     runs-on: ubuntu-latest
     container: quay.io/pypa/manylinux_2_28_x86_64
 
