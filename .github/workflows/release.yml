@@ -32,7 +32,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: dist-linux-${{ matrix.python-version }}
-        path: dist
+        path: dist/
 
   # build-macos:
   #   runs-on: macos-latest
@@ -93,7 +93,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: dist-windows-${{ matrix.python-version }}
-        path: dist
+        path: dist/
 
   upload:
     needs: [build-linux, build-windows]
@@ -117,77 +117,15 @@ jobs:
     - name: Create source dist
       run: poetry run python setup.py sdist
 
-    - name: Stage linux 3.8
+    - name: Download Artifacts
       uses: actions/download-artifact@v3
       with:
-        name: dist-linux-3.8
-    - run: mv -v dist-linux-3.8/* dist/
+        path: artifacts
+    - run: find artifacts/ -type f -print0 | xargs -0 mv -t dist
 
-    - name: Stage linux 3.9
-      uses: actions/download-artifact@v3
-      with:
-        name: dist-linux-3.9
-    - run: mv -v dist-linux-3.9/* dist/
-
-    - name: Stage linux 3.10
-      uses: actions/download-artifact@v3
-      with:
-        name: dist-linux-3.10
-    - run: mv -v dist-linux-3.10/* dist/
-
-    - name: Stage linux 3.11
-      uses: actions/download-artifact@v3
-      with:
-        name: dist-linux-3.11
-    - run: mv -v dist-linux-3.11/* dist/
-
-    # - name: Stage macos 3.8
-    #   uses: actions/download-artifact@v3
-    #   with:
-    #     name: dist-macos-3.8
-    # - run: mv -v dist-macos-3.8/* dist/
-
-    # - name: Stage macos 3.9
-    #   uses: actions/download-artifact@v3
-    #   with:
-    #     name: dist-macos-3.9
-    # - run: mv -v dist-macos-3.9/* dist/
-
-    # - name: Stage macos 3.10
-    #   uses: actions/download-artifact@v3
-    #   with:
-    #     name: dist-macos-3.10
-    # - run: mv -v dist-macos-3.10/* dist/
-
-    # - name: Stage macos 3.11
-    #   uses: actions/download-artifact@v3
-    #   with:
-    #     name: dist-macos-3.11
-    # - run: mv -v dist-macos-3.11/* dist/
-
-    - name: Stage windows 3.8
-      uses: actions/download-artifact@v3
-      with:
-        name: dist-windows-3.8
-    - run: mv -v dist-windows-3.8/* dist/
-
-    - name: Stage windows 3.9
-      uses: actions/download-artifact@v3
-      with:
-        name: dist-windows-3.9
-    - run: mv -v dist-windows-3.9/* dist/
-
-    - name: Stage windows 3.10
-      uses: actions/download-artifact@v3
-      with:
-        name: dist-windows-3.10
-    - run: mv -v dist-windows-3.10/* dist/
-
-    - name: Stage windows 3.11
-      uses: actions/download-artifact@v3
-      with:
-        name: dist-windows-3.11
-    - run: mv -v dist-windows-3.11/* dist/
+    - name: Display structure of downloaded files
+      run: ls -R
+      working-directory: dist
 
     - name: Create PYPIRC
       env:
