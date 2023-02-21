@@ -7,32 +7,105 @@ on:
 
 jobs:
 
-  build-linux:
+   build-linux-cp38:
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+    container: quay.io/pypa/manylinux_2_28_x86_64
 
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Python ${{ matrix.python-version }} x64
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-
     - name: Install Python package dependencies
-      run: pip install cython wheel
+      run: /opt/python/cp38-cp38m/bin/python -m pip install cython wheel
 
     - name: Build binary wheel
-      run: python setup.py bdist_wheel
+      run: /opt/python/cp38-cp38m/bin/python setup.py bdist_wheel
+
+    - name: Apply auditwheel
+      run: auditwheel repair -w dist dist/*
+
+    - name: Remove linux wheel
+      run: rm dist/*-linux_x86_64.whl
 
     - name: Archive dist artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: dist-linux-${{ matrix.python-version }}
+        name: dist-linux-3.8
         path: dist/
+
+  build-linux-cp39:
+    runs-on: ubuntu-latest
+    container: quay.io/pypa/manylinux_2_28_x86_64
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Python package dependencies
+      run: /opt/python/cp39-cp39m/bin/python -m pip install cython wheel
+
+    - name: Build binary wheel
+      run: /opt/python/cp39-cp39m/bin/python setup.py bdist_wheel
+
+    - name: Apply auditwheel
+      run: auditwheel repair -w dist dist/*
+
+    - name: Remove linux wheel
+      run: rm dist/*-linux_x86_64.whl
+
+    - name: Archive dist artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: dist-linux-3.9
+        path: dist/
+
+  build-linux-cp310:
+    runs-on: ubuntu-latest
+    container: quay.io/pypa/manylinux_2_28_x86_64
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Python package dependencies
+      run: /opt/python/cp310-cp310m/bin/python -m pip install cython wheel
+
+    - name: Build binary wheel
+      run: /opt/python/cp310-cp310m/bin/python setup.py bdist_wheel
+
+    - name: Apply auditwheel
+      run: auditwheel repair -w dist dist/*
+
+    - name: Remove linux wheel
+      run: rm dist/*-linux_x86_64.whl
+
+    - name: Archive dist artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist-linux-3.10
+        path: dist/
+
+  # build-linux-cp311:
+  #   runs-on: ubuntu-latest
+  #   container: quay.io/pypa/manylinux2014_x86_64
+
+  #   steps:
+  #   - uses: actions/checkout@v2
+
+  #   - name: Install Python package dependencies
+  #     run: /opt/python/cp38-cp38/bin/python -m pip install cython wheel
+
+  #   - name: Build binary wheel
+  #     run: /opt/python/cp38-cp38/bin/python setup.py bdist_wheel
+
+  #   - name: Apply auditwheel for manylinux wheel
+  #     run: auditwheel repair -w dist dist/*
+
+  #   - name: Remove linux wheel
+  #     run: rm dist/*-linux_x86_64.whl
+
+  #   - name: Archive dist artifacts
+  #     uses: actions/upload-artifact@v2
+  #     with:
+  #       name: dist-linux-3.8
+  #       path: dist
 
   # build-macos:
   #   runs-on: macos-latest
