@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "csiro-spectral-tools"
-version = "0.2.0"
+version = "0.2.1"
 description = "A small collection of tools that I have used to work with spectral data. A bunch of IO stuff, some spectral extraction stuff and some convex hull correction stuff."
 authors = ["Andrew Rodger", "Sam Bradley <sam.bradley@csiro.au>"]
 license = "MIT"

@@ -67,7 +67,7 @@ if HAVE_CYTHON:
 
 setup(
     name="csiro-spectral-tools",
-    version="0.2.0",
+    version="0.2.1",
     packages=find_packages(),
     package_data={"csiro_spectral_tools": ["ext/*.pyd", "ext/*.so"]},
     include_package_data=True,
